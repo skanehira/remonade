@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/skanehira/remonade/config"
+	"github.com/skanehira/remonade/util"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 )
@@ -17,10 +19,6 @@ var (
 	ErrNotExistConfig = errors.New("config file is not exists")
 	ErrEmptyEDITOR    = errors.New("$EDITOR is empty")
 )
-
-type Config struct {
-	Token string `yaml:"token"`
-}
 
 func runInit(path string) error {
 	var (
@@ -60,11 +58,8 @@ func runInit(path string) error {
 		return ErrEmptyToken
 	}
 
-	config := Config{
-		Token: token,
-	}
-
-	return yaml.NewEncoder(f).Encode(config)
+	config.Config.Token = token
+	return yaml.NewEncoder(f).Encode(config.Config)
 }
 
 func runEdit(path string) error {
@@ -100,21 +95,15 @@ func run(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	path, err := os.UserConfigDir()
-	if err != nil {
-		exitError(err)
-	}
-	configPath := filepath.Join(path, "remonade", "config.yaml")
-
 	if args[0] == "init" {
-		if err := runInit(configPath); err != nil {
-			exitError(err)
+		if err := runInit(config.Path); err != nil {
+			util.ExitError(err)
 		}
 	}
 
 	if args[0] == "edit" {
-		if err := runEdit(configPath); err != nil {
-			exitError(err)
+		if err := runEdit(config.Path); err != nil {
+			util.ExitError(err)
 		}
 	}
 }

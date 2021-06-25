@@ -1,19 +1,11 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
 	Use: "remonade",
-}
-
-func exitError(msg interface{}) {
-	fmt.Fprintln(os.Stderr, msg)
-	os.Exit(1)
 }
 
 func Execute() {
@@ -22,6 +14,6 @@ func Execute() {
 	}
 
 	if err := rootCmd.Execute(); err != nil {
-		exitError(err)
+		util.ExitError(err)
 	}
 }
