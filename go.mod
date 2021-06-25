@@ -1,4 +1,4 @@
-module github.com/skanehira/go-cli-template
+module github.com/skanehira/remonade
 
 go 1.16
 
