@@ -1,0 +1,143 @@
+package cmd
+
+import (
+	"bufio"
+	"errors"
+	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+
+	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
+)
+
+var (
+	ErrEmptyToken     = errors.New("access token is empty")
+	ErrNotExistConfig = errors.New("config file is not exists")
+	ErrEmptyEDITOR    = errors.New("$EDITOR is empty")
+)
+
+type Config struct {
+	Token string `yaml:"token"`
+}
+
+func runInit(path string) error {
+	var (
+		f   *os.File
+		err error
+	)
+
+	if notExist(path) {
+		base := filepath.Dir(path)
+		if notExist(base) {
+			if err := os.Mkdir(base, os.ModePerm); err != nil {
+				return err
+			}
+		}
+
+		f, err = os.Create(path)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+
+		fmt.Println("config file: " + path)
+	} else {
+		f, err = os.OpenFile(path, os.O_WRONLY, 0)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+	}
+
+	fmt.Print("Your access token: ")
+	sc := bufio.NewScanner(os.Stdin)
+
+	sc.Scan()
+	token := sc.Text()
+	if token == "" {
+		return ErrEmptyToken
+	}
+
+	config := Config{
+		Token: token,
+	}
+
+	return yaml.NewEncoder(f).Encode(config)
+}
+
+func runEdit(path string) error {
+	if notExist(path) {
+		return ErrNotExistConfig
+	}
+
+	editor := os.Getenv("EDITOR")
+	if editor == "" {
+		return ErrEmptyEDITOR
+	}
+	cmd := exec.Command(editor, path)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
+}
+
+func notExist(path string) bool {
+	_, err := os.Stat(path)
+	return errors.Is(err, os.ErrNotExist)
+}
+
+func run(cmd *cobra.Command, args []string) {
+	if len(args) == 0 {
+		_ = cmd.Help()
+		os.Exit(1)
+	}
+
+	if args[0] != "edit" && args[0] != "init" {
+		_ = cmd.Help()
+		os.Exit(1)
+	}
+
+	path, err := os.UserConfigDir()
+	if err != nil {
+		exitError(err)
+	}
+	configPath := filepath.Join(path, "remonade", "config.yaml")
+
+	if args[0] == "init" {
+		if err := runInit(configPath); err != nil {
+			exitError(err)
+		}
+	}
+
+	if args[0] == "edit" {
+		if err := runEdit(configPath); err != nil {
+			exitError(err)
+		}
+	}
+}
+
+var configCmd = &cobra.Command{
+	Use: "config",
+	Run: run,
+}
+
+func init() {
+	configCmd.SetHelpFunc(func(cmd *cobra.Command, args []string) {
+		fmt.Print(`Config command
+
+Usage:
+  remonade config [edit|init]
+
+Command:
+  init                Setup config
+  edit                Edit config
+
+Flags:
+  -h, --help          help for config
+`)
+	})
+	rootCmd.AddCommand(configCmd)
+}
