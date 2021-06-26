@@ -64,6 +64,8 @@ func NewAppliances() *Appliances {
 			a.Power(true)
 		case 'd':
 			a.Power(false)
+		case 'e':
+			a.Update()
 		}
 		return event
 	})
@@ -102,7 +104,7 @@ func (a *Appliances) makeRow(app *natureremo.Appliance) []string {
 	return row
 }
 
-func (a *Appliances) GetSelected() *natureremo.Appliance {
+func (a *Appliances) SelectedApp() *natureremo.Appliance {
 	row, _ := a.GetSelection()
 	idx := row - 1
 	if len(a.apps) <= idx {
@@ -113,7 +115,7 @@ func (a *Appliances) GetSelected() *natureremo.Appliance {
 }
 
 func (a *Appliances) Power(on bool) {
-	app := a.GetSelected()
+	app := a.SelectedApp()
 	if app == nil {
 		return
 	}
@@ -175,4 +177,158 @@ func (a *Appliances) Power(on bool) {
 
 	// insert row to event panel
 	UI.events.AppendRow(cols)
+}
+
+func (a *Appliances) Update() {
+	app := a.SelectedApp()
+	if app == nil {
+		return
+	}
+
+	switch app.Type {
+	case natureremo.ApplianceTypeAirCon:
+		a.UpdateAirCon(app)
+	case natureremo.ApplianceTypeLight:
+	}
+}
+
+func (a *Appliances) UpdateLight(app *natureremo.Appliance) {
+
+}
+
+func (a *Appliances) UpdateAirCon(app *natureremo.Appliance) {
+	var (
+		currentPower int
+	)
+
+	if app.AirConSettings.Button != "" {
+		currentPower = 1
+	}
+
+	form := tview.NewForm()
+	form.SetBorder(true)
+	form.SetTitle(" AirCon Settings ")
+	form.SetTitleAlign(tview.AlignLeft)
+
+	form.AddDropDown("Power", []string{
+		"ON",
+		"OFF",
+	}, currentPower, func(text string, idx int) {
+		if idx == currentPower {
+			return
+		}
+		currentPower = idx
+
+		// TODO
+	})
+
+	var modes []string
+	var currentMode int
+	for m := range app.AirCon.Range.Modes {
+		modes = append(modes, string(m))
+	}
+	for i, m := range modes {
+		if string(app.AirConSettings.OperationMode) == m {
+			currentMode = i
+			break
+		}
+	}
+
+	form.AddDropDown("Modes", modes, currentMode, func(opt string, idx int) {
+		if currentMode == idx {
+			return
+		}
+		idx = currentMode
+		// TODO
+	})
+
+	opeMode := modes[currentMode]
+	modeInfo := app.AirCon.Range.Modes[natureremo.OperationMode(opeMode)]
+	if opeMode != "below" {
+		var currentTemp int
+		temps := modeInfo.Temperature
+		temp := app.AirConSettings.Temperature
+
+		for i, m := range temps {
+			if m == temp {
+				currentTemp = i
+				break
+			}
+		}
+
+		form.AddDropDown("Temperature", temps, currentTemp, func(opt string, idx int) {
+			if idx == currentTemp {
+				return
+			}
+			currentTemp = idx
+			// TODO
+		})
+	}
+
+	if opeMode != "dry" {
+		vol := string(app.AirConSettings.AirVolume)
+		var vols []string
+		var currentVol int
+		for i, v := range modeInfo.AirVolume {
+			if vol == string(v) {
+				currentVol = i
+			}
+			vols = append(vols, string(v))
+		}
+
+		form.AddDropDown("Volume", vols, currentVol, func(opt string, idx int) {
+			if currentVol == idx {
+				return
+			}
+
+			idx = currentVol
+			// TODO
+		})
+	}
+
+	dir := string(app.AirConSettings.AirDirection)
+	var dirs []string
+	var currentDir int
+	for i, d := range modeInfo.AirDirection {
+		if string(d) == dir {
+			currentDir = i
+		}
+		dirs = append(dirs, string(d))
+	}
+
+	form.AddDropDown("Direction", dirs, currentDir, func(opt string, idx int) {
+		if currentDir == idx {
+			return
+		}
+		idx = currentDir
+		// TODO
+	})
+
+	close := func() {
+		UI.pages.RemovePage("form").ShowPage("main")
+		UI.app.SetFocus(a)
+	}
+
+	form.AddButton("Close", func() {
+		close()
+	})
+
+	form.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Key() {
+		case tcell.KeyCtrlN:
+			k := tcell.NewEventKey(tcell.KeyTab, 0, tcell.ModNone)
+			UI.app.QueueEvent(k)
+		case tcell.KeyCtrlP:
+			k := tcell.NewEventKey(tcell.KeyBacktab, 0, tcell.ModNone)
+			UI.app.QueueEvent(k)
+		}
+
+		switch event.Rune() {
+		case 'q', 'c':
+			close()
+		}
+		return event
+	})
+
+	UI.pages.AddAndSwitchToPage("form", UI.Modal(form, 50, 15), true).ShowPage("main")
 }
