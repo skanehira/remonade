@@ -23,7 +23,7 @@ func NewHeader() *Header {
 		return h
 	}
 
-	text := fmt.Sprintf("[yellow::bl]ID: [-:-:-]%s [yellow::bl]Name: [-:-:-]%s", me.ID, me.Nickname)
+	text := fmt.Sprintf(" [yellow::bl]ID: [-:-:-]%s [yellow::bl]Name: [-:-:-]%s", me.ID, me.Nickname)
 	h.SetText(text)
 	return h
 }
