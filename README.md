@@ -5,23 +5,43 @@
 ![GitHub CI Status](https://img.shields.io/github/workflow/status/skanehira/remonade/ci?label=CI)
 ![GitHub Release Status](https://img.shields.io/github/workflow/status/skanehira/remonade/Release?label=release)
 
-# remonade
-This is template that help you to quick implement some CLI using Go.
+# remonade - UNDER DEVELOPMENT
+Unofficial Nature Remo CLI.
 
-This repository is contains following.
+![](https://i.gyazo.com/5c2c9c5979368be9ee89a0521166104b.png)
 
-- minimal CLI implementation using [spf13/cobra](https://github.com/spf13/cobra)
-- CI/CD
-  - golangci-lint
-  - go test
-  - goreleaser
-  - dependabot for github-actions and Go
-  - CodeQL Analysis (Go)
+## Installation
 
-## How to use
-1. fork this repository
-2. replace `skanehira` to your user name using `sed`(or others)
-3. run `make init`
+```sh
+$ go install github.com/skanehira/remonade@latest
+```
+
+## Usage
+At first, you must generate token from [home.nature.global](https://home.nature.global).
+And then, you can setup token to configuration file with run `remonade init`.
+
+```sh
+# setup your token
+$ remonade init
+
+# edit your config
+$ remonade edit
+
+# run
+$ remonade
+```
+
+### Key maps
+
+| Panel      | Key | Description |
+|------------|-----|-------------|
+| Common     | `j` | move down   |
+| Common     | `k` | move up     |
+| Common     | `h` | move left   |
+| Common     | `l` | move right  |
+| Appliances | `u` | Power on    |
+| Appliances | `d` | Power off   |
+
 
 ## Author
 skanehira
