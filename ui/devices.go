@@ -53,8 +53,8 @@ func NewDevices() *Devices {
 			dev.MacAddress,
 			dev.SerialNumber,
 			dev.FirmwareVersion,
-			dev.CreatedAt.Format(dateFormat),
-			dev.UpdatedAt.Format(dateFormat),
+			dev.CreatedAt.Local().Format(dateFormat),
+			dev.UpdatedAt.Local().Format(dateFormat),
 		}
 
 		for j, col := range cols {

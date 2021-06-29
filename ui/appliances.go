@@ -132,7 +132,7 @@ func (a *Appliances) Power(on bool) {
 
 	switch app.Type {
 	case natureremo.ApplianceTypeAirCon:
-		cols = []string{"Aircon", "Power-ON", time.Now().Format(dateFormat)}
+		cols = []string{"Aircon", "Power-ON", time.Now().Local().Format(dateFormat)}
 		settings := &natureremo.AirConSettings{
 			Button: natureremo.ButtonPowerOn,
 		}
@@ -143,7 +143,7 @@ func (a *Appliances) Power(on bool) {
 		err = UI.cli.ApplianceService.
 			UpdateAirConSettings(context.Background(), app, settings)
 	case natureremo.ApplianceTypeLight:
-		cols = []string{"Light", "Power-ON", time.Now().Format(dateFormat)}
+		cols = []string{"Light", "Power-ON", time.Now().Local().Format(dateFormat)}
 		btn := "on"
 		if !on {
 			cols[1] = "Power-OFF"
@@ -151,7 +151,7 @@ func (a *Appliances) Power(on bool) {
 		}
 		_, err = UI.cli.ApplianceService.SendLightSignal(context.Background(), app, btn)
 	case natureremo.ApplianceTypeTV:
-		cols = []string{"TV", "Power-ON", time.Now().Format(dateFormat)}
+		cols = []string{"TV", "Power-ON", time.Now().Local().Format(dateFormat)}
 		btn := "power"
 		if !on {
 			cols[1] = "Power-OFF"
