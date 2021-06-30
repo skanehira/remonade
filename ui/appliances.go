@@ -47,10 +47,10 @@ func NewAppliances() *Appliances {
 	if err != nil {
 		return a
 	}
+
 	a.apps = apps
 
-	for i, app := range apps {
-		row := a.makeRow(app)
+	for i, row := range makeRows(apps) {
 		for j, col := range row {
 			cell := tview.NewTableCell(col).SetTextColor(tcell.ColorWhite)
 			a.SetCell(i+1, j, cell)
@@ -71,37 +71,6 @@ func NewAppliances() *Appliances {
 	})
 
 	return a
-}
-
-func (a *Appliances) makeRow(app *natureremo.Appliance) []string {
-	var row []string
-
-	if app.Type == natureremo.ApplianceTypeAirCon {
-		if app.AirConSettings.Button == "" {
-			row = []string{"ON"}
-		} else {
-			row = []string{"OFF"}
-		}
-	} else if app.Type == natureremo.ApplianceTypeLight {
-		if app.Light.State.Power == "off" {
-			row = []string{"OFF"}
-		} else {
-			row = []string{"ON"}
-		}
-	} else if app.Type == natureremo.ApplianceTypeTV {
-		row = []string{string(app.TV.State.Input)}
-	} else {
-		row = []string{"-"}
-	}
-
-	row = append(row, []string{
-		app.Nickname,
-		string(app.Type),
-		app.Model.Name,
-		app.Model.Manufacturer,
-		app.Model.Country,
-	}...)
-	return row
 }
 
 func (a *Appliances) SelectedApp() *natureremo.Appliance {
