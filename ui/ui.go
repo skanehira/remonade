@@ -136,6 +136,7 @@ func (ui *ui) Start() {
 }
 
 func NewUI() {
+	config.Init()
 	Client = natureremo.NewClient(config.Config.Token)
 	ui := &ui{
 		app: tview.NewApplication(),

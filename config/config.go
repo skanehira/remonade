@@ -16,7 +16,7 @@ type config struct {
 var Config config
 var Path string
 
-func init() {
+func Init() {
 	path, err := os.UserConfigDir()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
