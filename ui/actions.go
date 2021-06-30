@@ -38,6 +38,15 @@ func ActionGetDevices(state State, action Action, ctx interface{}) (State, error
 		return state, err
 	}
 	state.Devices = devices
+	for _, dev := range devices {
+		for t, e := range dev.NewestEvents {
+			state.Events = append(state.Events, Event{
+				Type:    string(t),
+				Value:   fmt.Sprintf("%v", e.Value),
+				Created: e.CreatedAt,
+			})
+		}
+	}
 	return state, nil
 }
 

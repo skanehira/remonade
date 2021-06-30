@@ -25,8 +25,11 @@ func (d *dispatcher) Dispatch(action Action, ctx interface{}) {
 
 	d.state = &newState
 
-	d.state.UpdateAppliances()
-	d.state.UpdateDevices()
+	go UI.app.QueueUpdateDraw(func() {
+		d.state.UpdateAppliances()
+		d.state.UpdateDevices()
+		d.state.UpdateEvents()
+	})
 }
 
 var Dispatcher *dispatcher

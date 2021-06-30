@@ -37,5 +37,5 @@ func (s *State) UpdateAppliances() {
 }
 
 func (s *State) UpdateEvents() {
-
+	UI.events.UpdateView(s.Events)
 }

@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"time"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"github.com/skanehira/remonade/config"
@@ -8,8 +10,12 @@ import (
 	"github.com/tenntenn/natureremo"
 )
 
-var UI *ui
-var Client *natureremo.Client
+const INTERVAL = 1
+
+var (
+	UI     *ui
+	Client *natureremo.Client
+)
 
 type ui struct {
 	app        *tview.Application
@@ -137,6 +143,13 @@ func Start() {
 
 	Dispatcher.Dispatch(GetAppliances, nil)
 	Dispatcher.Dispatch(GetDevices, nil)
+
+	go func() {
+		t := time.NewTicker(INTERVAL * time.Hour)
+		for range t.C {
+			Dispatcher.Dispatch(GetDevices, nil)
+		}
+	}()
 
 	if err := UI.app.Run(); err != nil {
 		UI.app.Stop()
