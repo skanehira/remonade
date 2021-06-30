@@ -191,6 +191,7 @@ func (a *Appliances) UpdateAirCon(app *natureremo.Appliance) {
 		// TODO
 	})
 
+	// nolint prealloc
 	var modes []string
 	var currentMode int
 	for m := range app.AirCon.Range.Modes {
@@ -207,6 +208,7 @@ func (a *Appliances) UpdateAirCon(app *natureremo.Appliance) {
 		if currentMode == idx {
 			return
 		}
+		// nolint ineffassign
 		idx = currentMode
 		// TODO
 	})
@@ -250,14 +252,16 @@ func (a *Appliances) UpdateAirCon(app *natureremo.Appliance) {
 				return
 			}
 
+			// nolint ineffassign
 			idx = currentVol
 			// TODO
 		})
 	}
 
-	dir := string(app.AirConSettings.AirDirection)
+	// nolint prealloc
 	var dirs []string
 	var currentDir int
+	dir := string(app.AirConSettings.AirDirection)
 	for i, d := range modeInfo.AirDirection {
 		if string(d) == dir {
 			currentDir = i
@@ -269,6 +273,7 @@ func (a *Appliances) UpdateAirCon(app *natureremo.Appliance) {
 		if currentDir == idx {
 			return
 		}
+		// nolint ineffassign
 		idx = currentDir
 		// TODO
 	})

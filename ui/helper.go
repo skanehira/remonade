@@ -5,21 +5,22 @@ import "github.com/tenntenn/natureremo"
 func makeRow(app *natureremo.Appliance) []string {
 	var row []string
 
-	if app.Type == natureremo.ApplianceTypeAirCon {
+	switch app.Type {
+	case natureremo.ApplianceTypeAirCon:
 		if app.AirConSettings.Button == "" {
 			row = []string{"ON"}
 		} else {
 			row = []string{"OFF"}
 		}
-	} else if app.Type == natureremo.ApplianceTypeLight {
+	case natureremo.ApplianceTypeLight:
 		if app.Light.State.Power == "off" {
 			row = []string{"OFF"}
 		} else {
 			row = []string{"ON"}
 		}
-	} else if app.Type == natureremo.ApplianceTypeTV {
+	case natureremo.ApplianceTypeTV:
 		row = []string{string(app.TV.State.Input)}
-	} else {
+	default:
 		row = []string{"-"}
 	}
 

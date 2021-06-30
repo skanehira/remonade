@@ -9,6 +9,8 @@ import (
 	"github.com/rivo/tview"
 )
 
+const INTERVAL = 3
+
 type Events struct {
 	*tview.Table
 }
@@ -70,7 +72,7 @@ func NewEvents() *Events {
 	}
 
 	go func() {
-		t := time.NewTicker(3 * time.Minute)
+		t := time.NewTicker(INTERVAL * time.Minute)
 		for range t.C {
 			update()
 		}
