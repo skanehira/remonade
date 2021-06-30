@@ -42,7 +42,7 @@ func NewDevices() *Devices {
 		})
 	}
 
-	devices, err := UI.cli.DeviceService.GetAll(context.Background())
+	devices, err := Client.DeviceService.GetAll(context.Background())
 	if err != nil {
 		return d
 	}

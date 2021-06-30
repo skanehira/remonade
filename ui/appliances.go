@@ -43,7 +43,7 @@ func NewAppliances() *Appliances {
 		})
 	}
 
-	apps, err := UI.cli.ApplianceService.GetAll(context.Background())
+	apps, err := Client.ApplianceService.GetAll(context.Background())
 	if err != nil {
 		return a
 	}
@@ -140,7 +140,7 @@ func (a *Appliances) Power(on bool) {
 			cols[1] = "Power-OFF"
 			settings.Button = natureremo.ButtonPowerOff
 		}
-		err = UI.cli.ApplianceService.
+		err = Client.ApplianceService.
 			UpdateAirConSettings(context.Background(), app, settings)
 	case natureremo.ApplianceTypeLight:
 		cols = []string{"Light", "Power-ON", time.Now().Local().Format(dateFormat)}
@@ -149,14 +149,14 @@ func (a *Appliances) Power(on bool) {
 			cols[1] = "Power-OFF"
 			btn = "off"
 		}
-		_, err = UI.cli.ApplianceService.SendLightSignal(context.Background(), app, btn)
+		_, err = Client.ApplianceService.SendLightSignal(context.Background(), app, btn)
 	case natureremo.ApplianceTypeTV:
 		cols = []string{"TV", "Power-ON", time.Now().Local().Format(dateFormat)}
 		btn := "power"
 		if !on {
 			cols[1] = "Power-OFF"
 		}
-		_, err = UI.cli.ApplianceService.SendTVSignal(context.Background(), app, btn)
+		_, err = Client.ApplianceService.SendTVSignal(context.Background(), app, btn)
 		state = ""
 	default:
 		return

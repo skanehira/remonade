@@ -9,9 +9,9 @@ import (
 )
 
 var UI *ui
+var Client *natureremo.Client
 
 type ui struct {
-	cli        *natureremo.Client
 	app        *tview.Application
 	pages      *tview.Pages
 	primitives []tview.Primitive
@@ -135,8 +135,8 @@ func (ui *ui) Start() {
 }
 
 func NewUI() {
+	Client = natureremo.NewClient(config.Config.Token)
 	ui := &ui{
-		cli: natureremo.NewClient(config.Config.Token),
 		app: tview.NewApplication(),
 	}
 

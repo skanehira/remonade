@@ -17,7 +17,7 @@ func NewHeader() *Header {
 	}
 	h.SetDynamicColors(true)
 
-	me, err := UI.cli.UserService.Me(context.Background())
+	me, err := Client.UserService.Me(context.Background())
 	if err != nil {
 		h.SetText("unknown")
 		return h
