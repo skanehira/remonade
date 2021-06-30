@@ -21,7 +21,7 @@ func NewAppliances() *Appliances {
 	}
 	a.SetTitle(" Appliances ").SetTitleAlign(tview.AlignLeft)
 	a.SetFixed(1, 0).SetBorder(true)
-	a.Clear().SetBorderColor(tcell.ColorYellow)
+	a.SetBorderColor(tcell.ColorYellow)
 
 	headers := []string{
 		"State",
