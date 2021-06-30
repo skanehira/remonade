@@ -16,10 +16,11 @@ type (
 type Action string
 
 var (
-	GetAppliances Action = "get appliances"
-	GetDevices    Action = "get devices"
-	PowerON       Action = "power on"
-	PowerOFF      Action = "power off"
+	GetAppliances           Action = "get appliances"
+	GetDevices              Action = "get devices"
+	PowerON                 Action = "power on"
+	PowerOFF                Action = "power off"
+	OpenUpdateApplianceView Action = "open update appliance view"
 )
 
 func ActionGetAppliances(state State, action Action, ctx interface{}) (State, error) {
@@ -41,21 +42,12 @@ func ActionGetDevices(state State, action Action, ctx interface{}) (State, error
 }
 
 func ActionAppliancesPower(state State, action Action, ctx interface{}) (State, error) {
-	row, ok := ctx.(int)
-	if !ok {
-		return state, fmt.Errorf("ctx is not int: %#+v", ctx)
+	app, err := getAppliance(state, ctx)
+	if err != nil {
+		return state, err
 	}
 
-	if row >= len(state.Appliances) {
-		return state, fmt.Errorf("index out of range, row: %v, state: %#+v", row, state)
-	}
-
-	app := state.Appliances[row]
 	on := action == PowerON
-
-	var (
-		err error
-	)
 
 	switch app.Type {
 	case natureremo.ApplianceTypeAirCon:
@@ -81,4 +73,33 @@ func ActionAppliancesPower(state State, action Action, ctx interface{}) (State, 
 	}
 
 	return state, err
+}
+
+func ActionOpenUpdateApplianceView(state State, action Action, ctx interface{}) (State, error) {
+	app, err := getAppliance(state, ctx)
+	if err != nil {
+		return state, err
+	}
+
+	switch app.Type {
+	case natureremo.ApplianceTypeAirCon:
+		UI.appliances.OpenUpdateAirConView(app)
+	case natureremo.ApplianceTypeLight:
+		// TODO
+	}
+
+	return state, nil
+}
+
+func getAppliance(state State, ctx interface{}) (*natureremo.Appliance, error) {
+	row, ok := ctx.(int)
+	if !ok {
+		return nil, fmt.Errorf("ctx is not int: %#+v", ctx)
+	}
+
+	if row >= len(state.Appliances) {
+		return nil, fmt.Errorf("index out of range, row: %v, state: %#+v", row, state)
+	}
+
+	return state.Appliances[row], nil
 }

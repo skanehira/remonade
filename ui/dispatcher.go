@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"log"
+	"fmt"
 )
 
 type dispatcher struct {
@@ -12,13 +12,14 @@ type dispatcher struct {
 func (d *dispatcher) Dispatch(action Action, ctx interface{}) {
 	f, ok := d.actions[action]
 	if !ok {
-		log.Printf("doesn't register action: %v\n", action)
+		msg := fmt.Sprintf("doesn't register action: %v\n", action)
+		UI.Message(msg)
 		return
 	}
 
 	newState, err := f(*d.state, action, ctx)
 	if err != nil {
-		log.Println(err)
+		UI.Message(err.Error())
 		return
 	}
 
@@ -34,10 +35,11 @@ func init() {
 	Dispatcher = &dispatcher{
 		state: &State{},
 		actions: map[Action]ActionFunc{
-			GetAppliances: ActionGetAppliances,
-			GetDevices:    ActionGetDevices,
-			PowerON:       ActionAppliancesPower,
-			PowerOFF:      ActionAppliancesPower,
+			GetAppliances:           ActionGetAppliances,
+			GetDevices:              ActionGetDevices,
+			PowerON:                 ActionAppliancesPower,
+			PowerOFF:                ActionAppliancesPower,
+			OpenUpdateApplianceView: ActionOpenUpdateApplianceView,
 		},
 	}
 }

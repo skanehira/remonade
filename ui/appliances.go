@@ -62,8 +62,8 @@ func NewAppliances() *Appliances {
 			Dispatcher.Dispatch(PowerON, row)
 		case 'd':
 			Dispatcher.Dispatch(PowerOFF, row)
-			//case 'e':
-			//	a.Update()
+		case 'e':
+			Dispatcher.Dispatch(OpenUpdateApplianceView, row)
 		}
 		return event
 	})
@@ -71,20 +71,7 @@ func NewAppliances() *Appliances {
 	return a
 }
 
-//func (a *Appliances) Update() {
-//	app := a.SelectedApp()
-//	if app == nil {
-//		return
-//	}
-//
-//	switch app.Type {
-//	case natureremo.ApplianceTypeAirCon:
-//		a.UpdateAirCon(app)
-//	case natureremo.ApplianceTypeLight:
-//	}
-//}
-
-func (a *Appliances) UpdateAirCon(app *natureremo.Appliance) {
+func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 	var (
 		currentPower int
 	)
@@ -225,6 +212,7 @@ func (a *Appliances) UpdateAirCon(app *natureremo.Appliance) {
 
 	UI.pages.AddAndSwitchToPage("form", UI.Modal(form, 50, 15), true).ShowPage("main")
 }
+
 func makeApplianceRow(app *natureremo.Appliance) []string {
 	var row []string
 
