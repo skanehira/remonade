@@ -87,7 +87,12 @@ func (ui *ui) prev() {
 
 }
 
-func (ui *ui) Start() {
+func Start() {
+	Client = natureremo.NewClient(config.Config.Token)
+	UI = &ui{
+		app: tview.NewApplication(),
+	}
+
 	// for readability
 	row, col, rowSpan, colSpan := 0, 0, 0, 0
 
@@ -96,15 +101,15 @@ func (ui *ui) Start() {
 	devices := NewDevices()
 	apps := NewAppliances()
 
-	ui.primitives = []tview.Primitive{
+	UI.primitives = []tview.Primitive{
 		devices,
 		apps,
 		events,
 	}
 
-	ui.events = events
-	ui.devices = devices
-	ui.appliances = apps
+	UI.events = events
+	UI.devices = devices
+	UI.appliances = apps
 
 	// nolint gomnd
 	grid := tview.NewGrid().SetRows(1, 0, 0).SetColumns(0, 0, 0).
@@ -113,39 +118,27 @@ func (ui *ui) Start() {
 		AddItem(apps, row+2, col, rowSpan+1, colSpan+2, 0, 0, true).
 		AddItem(events, row+1, col+2, rowSpan+2, colSpan+1, 0, 0, true)
 
-	ui.pages = tview.NewPages().
+	UI.pages = tview.NewPages().
 		AddAndSwitchToPage("main", grid, true)
 
-	ui.app.SetRoot(ui.pages, true)
-	ui.app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+	UI.app.SetRoot(UI.pages, true)
+	UI.app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlN:
-			ui.next()
+			UI.next()
 		case tcell.KeyCtrlP:
-			ui.prev()
+			UI.prev()
 		}
 		return event
 	})
 
-	ui.app.SetFocus(devices)
+	UI.app.SetFocus(devices)
 
-	if err := ui.app.Run(); err != nil {
-		ui.app.Stop()
+	Dispatcher.Dispatch(GetAppliances, nil)
+	Dispatcher.Dispatch(GetDevices, nil)
+
+	if err := UI.app.Run(); err != nil {
+		UI.app.Stop()
 		util.ExitError(err)
 	}
-}
-
-func NewUI() {
-	config.Init()
-	Client = natureremo.NewClient(config.Config.Token)
-	ui := &ui{
-		app: tview.NewApplication(),
-	}
-
-	UI = ui
-}
-
-func Run() {
-	NewUI()
-	UI.Start()
 }

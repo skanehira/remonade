@@ -12,6 +12,7 @@ import (
 )
 
 func main() {
+	config.Init()
 	debug := os.Getenv("DEBUG")
 	if debug != "" {
 		path := filepath.Join(filepath.Dir(config.Path), "debug.log")

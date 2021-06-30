@@ -1,16 +1,16 @@
 package ui
 
 import (
-	"context"
-
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
+	"github.com/tenntenn/natureremo"
 )
 
 var dateFormat = "2006/01/02 15:04:05"
 
 type Devices struct {
 	*tview.Table
+	header []string
 }
 
 func NewDevices() *Devices {
@@ -20,9 +20,9 @@ func NewDevices() *Devices {
 
 	d.SetTitle(" Devices ").SetTitleAlign(tview.AlignLeft)
 	d.SetFixed(1, 0).SetBorder(true)
-	d.Clear().SetBorderColor(tcell.ColorBlue)
+	d.SetBorderColor(tcell.ColorBlue)
 
-	headers := []string{
+	d.header = []string{
 		"Name",
 		"Mac",
 		"Serial",
@@ -31,7 +31,12 @@ func NewDevices() *Devices {
 		"Updated",
 	}
 
-	for i, h := range headers {
+	return d
+}
+
+func (d *Devices) UpdateView(devices []*natureremo.Device) {
+	d.Clear()
+	for i, h := range d.header {
 		d.SetCell(0, i, &tview.TableCell{
 			Text:            h,
 			NotSelectable:   true,
@@ -40,11 +45,6 @@ func NewDevices() *Devices {
 			BackgroundColor: tcell.ColorDefault,
 			Attributes:      tcell.AttrBold | tcell.AttrUnderline,
 		})
-	}
-
-	devices, err := Client.DeviceService.GetAll(context.Background())
-	if err != nil {
-		return d
 	}
 
 	for i, dev := range devices {
@@ -62,6 +62,4 @@ func NewDevices() *Devices {
 			d.SetCell(i+1, j, cell)
 		}
 	}
-
-	return d
 }
