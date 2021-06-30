@@ -97,7 +97,7 @@ func Start() {
 	row, col, rowSpan, colSpan := 0, 0, 0, 0
 
 	events := NewEvents()
-	user := NewHeader()
+	header := NewHeader()
 	devices := NewDevices()
 	apps := NewAppliances()
 
@@ -113,7 +113,7 @@ func Start() {
 
 	// nolint gomnd
 	grid := tview.NewGrid().SetRows(1, 0, 0).SetColumns(0, 0, 0).
-		AddItem(user, row, col, rowSpan+1, colSpan+3, 0, 0, true).
+		AddItem(header, row, col, rowSpan+1, colSpan+3, 0, 0, true).
 		AddItem(devices, row+1, col, rowSpan+1, colSpan+2, 0, 0, true).
 		AddItem(apps, row+2, col, rowSpan+1, colSpan+2, 0, 0, true).
 		AddItem(events, row+1, col+2, rowSpan+2, colSpan+1, 0, 0, true)
