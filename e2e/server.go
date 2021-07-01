@@ -17,12 +17,14 @@ func main() {
 		log.Println(err)
 		return
 	}
-	defer f.Close()
 	m := map[string]interface{}{}
 
 	if err := json.NewDecoder(f).Decode(&m); err != nil {
-		log.Fatal(err)
+		f.Close()
+		log.Println(err)
+		return
 	}
+	f.Close()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
@@ -30,7 +32,7 @@ func main() {
 		w.Header().Add("X-Rate-Limit-Remaining", "30")
 		w.Header().Add("X-Rate-Limit-Reset", fmt.Sprintf("%d", time.Now().Unix()))
 
-		r.ParseForm()
+		_ = r.ParseForm()
 		log.Println(r.Form.Encode())
 
 		var respBody interface{}
