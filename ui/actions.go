@@ -9,7 +9,7 @@ import (
 
 type (
 	// process action, must return new state
-	ActionFunc func(state State, action Action, ctx interface{}) (State, error)
+	ActionFunc func(state *State, action Action, ctx interface{}) error
 )
 
 // Action type
@@ -23,19 +23,19 @@ var (
 	OpenUpdateApplianceView Action = "open update appliance view"
 )
 
-func ActionGetAppliances(state State, action Action, ctx interface{}) (State, error) {
+func ActionGetAppliances(state *State, action Action, ctx interface{}) error {
 	apps, err := Client.ApplianceService.GetAll(context.Background())
 	if err != nil {
-		return state, err
+		return err
 	}
 	state.Appliances = apps
-	return state, nil
+	return nil
 }
 
-func ActionGetDevices(state State, action Action, ctx interface{}) (State, error) {
+func ActionGetDevices(state *State, action Action, ctx interface{}) error {
 	devices, err := Client.DeviceService.GetAll(context.Background())
 	if err != nil {
-		return state, err
+		return err
 	}
 	state.Devices = devices
 	for _, dev := range devices {
@@ -47,13 +47,13 @@ func ActionGetDevices(state State, action Action, ctx interface{}) (State, error
 			})
 		}
 	}
-	return state, nil
+	return nil
 }
 
-func ActionAppliancesPower(state State, action Action, ctx interface{}) (State, error) {
+func ActionAppliancesPower(state *State, action Action, ctx interface{}) error {
 	app, err := getAppliance(state, ctx)
 	if err != nil {
-		return state, err
+		return err
 	}
 
 	on := action == PowerON
@@ -78,16 +78,16 @@ func ActionAppliancesPower(state State, action Action, ctx interface{}) (State, 
 		btn := "power"
 		_, err = Client.ApplianceService.SendTVSignal(context.Background(), app, btn)
 	default:
-		return state, fmt.Errorf("unsupported appliance: %v", app.Type)
+		return fmt.Errorf("unsupported appliance: %v", app.Type)
 	}
 
-	return state, err
+	return err
 }
 
-func ActionOpenUpdateApplianceView(state State, action Action, ctx interface{}) (State, error) {
+func ActionOpenUpdateApplianceView(state *State, action Action, ctx interface{}) error {
 	app, err := getAppliance(state, ctx)
 	if err != nil {
-		return state, err
+		return err
 	}
 
 	switch app.Type {
@@ -97,10 +97,10 @@ func ActionOpenUpdateApplianceView(state State, action Action, ctx interface{}) 
 		// TODO
 	}
 
-	return state, nil
+	return nil
 }
 
-func getAppliance(state State, ctx interface{}) (*natureremo.Appliance, error) {
+func getAppliance(state *State, ctx interface{}) (*natureremo.Appliance, error) {
 	row, ok := ctx.(int)
 	if !ok {
 		return nil, fmt.Errorf("ctx is not int: %#+v", ctx)
