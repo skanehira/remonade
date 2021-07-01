@@ -75,6 +75,7 @@ func init() {
 			PowerON:                 ActionAppliancesPower,
 			PowerOFF:                ActionAppliancesPower,
 			OpenUpdateApplianceView: ActionOpenUpdateApplianceView,
+			UpdateAirConSettings:    ActionOpenUpdateAirConSettings,
 		},
 	}
 }

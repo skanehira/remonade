@@ -1,6 +1,8 @@
 package ui
 
 import (
+	"log"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"github.com/tenntenn/natureremo"
@@ -72,119 +74,103 @@ func NewAppliances() *Appliances {
 }
 
 func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
-	var (
-		currentPower int
-	)
-
-	if app.AirConSettings.Button != "" {
-		currentPower = 1
-	}
-
 	form := tview.NewForm()
-	form.SetBorder(true)
-	form.SetTitle(" AirCon Settings ")
-	form.SetTitleAlign(tview.AlignLeft)
+	form.SetBorder(true).SetTitle(" AirCon Settings ").
+		SetTitleAlign(tview.AlignLeft)
 
-	form.AddDropDown("Power", []string{
-		"ON",
-		"OFF",
-	}, currentPower, func(text string, idx int) {
-		if idx == currentPower {
-			return
-		}
-		currentPower = idx
+	viewData := ToUpdateAirConViewData(app)
 
-		// TODO
-	})
+	dispatcher := make(chan map[string]UpdateAirConFormData)
 
-	// nolint prealloc
-	var modes []string
-	var currentMode int
-	for m := range app.AirCon.Range.Modes {
-		modes = append(modes, string(m))
-	}
-	for i, m := range modes {
-		if string(app.AirConSettings.OperationMode) == m {
-			currentMode = i
-			break
-		}
+	addTemp := func() {
+		form.AddDropDown("Temperature", viewData.Temp.Values, viewData.Temp.Current,
+			func(opt string, idx int) {
+				if idx == viewData.Temp.Current {
+					return
+				}
+				viewData.Temp.Current = idx
+				updateData := map[string]UpdateAirConFormData{app.ID: viewData}
+				dispatcher <- updateData
+			})
 	}
 
-	form.AddDropDown("Modes", modes, currentMode, func(opt string, idx int) {
-		if currentMode == idx {
-			return
+	addVolume := func() {
+		form.AddDropDown("Volume", viewData.Volume.Values, viewData.Volume.Current,
+			func(opt string, idx int) {
+				if viewData.Volume.Current == idx {
+					return
+				}
+				viewData.Volume.Current = idx
+				updateData := map[string]UpdateAirConFormData{app.ID: viewData}
+				dispatcher <- updateData
+			})
+	}
+
+	toggleItems := func() {
+		labels := []string{
+			"Temperature", "Volume",
 		}
-		// nolint ineffassign
-		idx = currentMode
-		// TODO
-	})
-
-	opeMode := modes[currentMode]
-	modeInfo := app.AirCon.Range.Modes[natureremo.OperationMode(opeMode)]
-	if opeMode != "below" {
-		var currentTemp int
-		temps := modeInfo.Temperature
-		temp := app.AirConSettings.Temperature
-
-		for i, m := range temps {
-			if m == temp {
-				currentTemp = i
-				break
+		for _, label := range labels {
+			idx := form.GetFormItemIndex(label)
+			if idx != -1 {
+				form.RemoveFormItem(idx)
 			}
 		}
 
-		form.AddDropDown("Temperature", temps, currentTemp, func(opt string, idx int) {
-			if idx == currentTemp {
+		switch viewData.Mode.Value() {
+		case "below":
+			addVolume()
+		case "cool", "warm":
+			addTemp()
+			addVolume()
+		case "dry":
+			addTemp()
+		}
+
+	}
+
+	form.AddDropDown("Power", viewData.Power.Values, viewData.Power.Current,
+		func(text string, idx int) {
+			if idx == viewData.Power.Current {
 				return
 			}
-			currentTemp = idx
-			// TODO
+			viewData.Power.Current = idx
+			updateData := map[string]UpdateAirConFormData{app.ID: viewData}
+			dispatcher <- updateData
 		})
-	}
 
-	if opeMode != "dry" {
-		vol := string(app.AirConSettings.AirVolume)
-		var vols []string
-		var currentVol int
-		for i, v := range modeInfo.AirVolume {
-			if vol == string(v) {
-				currentVol = i
-			}
-			vols = append(vols, string(v))
-		}
-
-		form.AddDropDown("Volume", vols, currentVol, func(opt string, idx int) {
-			if currentVol == idx {
+	form.AddDropDown("Modes", viewData.Mode.Values, viewData.Mode.Current,
+		func(opt string, idx int) {
+			if viewData.Mode.Current == idx {
 				return
 			}
-
-			// nolint ineffassign
-			idx = currentVol
-			// TODO
+			viewData.Mode.Current = idx
+			updateData := map[string]UpdateAirConFormData{app.ID: viewData}
+			dispatcher <- updateData
+			toggleItems()
 		})
-	}
 
-	// nolint prealloc
-	var dirs []string
-	var currentDir int
-	dir := string(app.AirConSettings.AirDirection)
-	for i, d := range modeInfo.AirDirection {
-		if string(d) == dir {
-			currentDir = i
-		}
-		dirs = append(dirs, string(d))
-	}
+	toggleItems()
 
-	form.AddDropDown("Direction", dirs, currentDir, func(opt string, idx int) {
-		if currentDir == idx {
-			return
+	form.AddDropDown("Direction", viewData.Direction.Values, viewData.Direction.Current,
+		func(opt string, idx int) {
+			if viewData.Direction.Current == idx {
+				return
+			}
+			viewData.Direction.Current = idx
+			updateData := map[string]UpdateAirConFormData{app.ID: viewData}
+			dispatcher <- updateData
+		})
+	// update appliance with view data
+	go func() {
+		for data := range dispatcher {
+			Dispatcher.Dispatch(UpdateAirConSettings, data)
 		}
-		// nolint ineffassign
-		idx = currentDir
-		// TODO
-	})
+		log.Println("aircon settings dispatcher goroutine is closed")
+	}()
 
 	close := func() {
+		close(dispatcher)
 		UI.pages.RemovePage("form").ShowPage("main")
 		UI.app.SetFocus(a)
 	}
@@ -195,22 +181,28 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 
 	form.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
-		case tcell.KeyCtrlN:
+		case tcell.KeyCtrlN, tcell.KeyCtrlJ:
 			k := tcell.NewEventKey(tcell.KeyTab, 0, tcell.ModNone)
 			UI.app.QueueEvent(k)
-		case tcell.KeyCtrlP:
+		case tcell.KeyCtrlP, tcell.KeyCtrlK:
 			k := tcell.NewEventKey(tcell.KeyBacktab, 0, tcell.ModNone)
 			UI.app.QueueEvent(k)
 		}
 
 		switch event.Rune() {
+		case 'j':
+			k := tcell.NewEventKey(tcell.KeyTab, 0, tcell.ModNone)
+			UI.app.QueueEvent(k)
+		case 'k':
+			k := tcell.NewEventKey(tcell.KeyBacktab, 0, tcell.ModNone)
+			UI.app.QueueEvent(k)
 		case 'q', 'c':
 			close()
 		}
 		return event
 	})
 
-	UI.pages.AddAndSwitchToPage("form", UI.Modal(form, 50, 15), true).ShowPage("main")
+	UI.pages.AddPage("form", UI.Modal(form, 50, 15), true, true).SendToFront("form")
 }
 
 func makeApplianceRow(app *natureremo.Appliance) []string {

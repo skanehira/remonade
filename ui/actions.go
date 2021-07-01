@@ -21,6 +21,7 @@ var (
 	PowerON                 Action = "power on"
 	PowerOFF                Action = "power off"
 	OpenUpdateApplianceView Action = "open update appliance view"
+	UpdateAirConSettings    Action = "update aircon settings"
 )
 
 func ActionGetAppliances(state *State, action Action, ctx interface{}) error {
@@ -96,6 +97,56 @@ func ActionOpenUpdateApplianceView(state *State, action Action, ctx interface{})
 	case natureremo.ApplianceTypeLight:
 		// TODO
 	}
+
+	return nil
+}
+
+func ActionOpenUpdateAirConSettings(state *State, action Action, ctx interface{}) error {
+	data, ok := ctx.(map[string]UpdateAirConFormData)
+	if !ok {
+		return fmt.Errorf(`ctx type is not valid type: %T`, ctx)
+	}
+
+	var (
+		id   string
+		form UpdateAirConFormData
+	)
+
+	for id, form = range data {
+		break
+	}
+
+	app := &natureremo.Appliance{ID: id}
+	settings := &natureremo.AirConSettings{}
+
+	if form.Power.Value() == "ON" {
+		settings.Button = natureremo.ButtonPowerOn
+	} else {
+		settings.Button = natureremo.ButtonPowerOff
+	}
+	settings.OperationMode = natureremo.OperationMode(form.Mode.Value())
+	settings.AirDirection = natureremo.AirDirection(form.Direction.Value())
+
+	mode := form.Mode.Value()
+	switch mode {
+	case "below":
+		settings.AirVolume = natureremo.AirVolume(form.Volume.Value())
+	case "cool", "swarm":
+		settings.Temperature = form.Temp.Value()
+		settings.AirVolume = natureremo.AirVolume(form.Volume.Value())
+	case "dry":
+		settings.Temperature = form.Temp.Value()
+	}
+
+	if err := Client.ApplianceService.UpdateAirConSettings(context.Background(), app, settings); err != nil {
+		return err
+	}
+
+	newApps, err := Client.ApplianceService.GetAll(context.Background())
+	if err != nil {
+		return err
+	}
+	state.Appliances = newApps
 
 	return nil
 }
