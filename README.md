@@ -5,10 +5,8 @@
 ![GitHub CI Status](https://img.shields.io/github/workflow/status/skanehira/remonade/ci?label=CI)
 ![GitHub Release Status](https://img.shields.io/github/workflow/status/skanehira/remonade/Release?label=release)
 
-# remonade - UNDER DEVELOPMENT
-Unofficial Nature Remo CLI.
-
-![](https://i.gyazo.com/5c2c9c5979368be9ee89a0521166104b.png)
+# <img src="https://i.gyazo.com/85e13d8198dcb843ece467cad46350e7.png" width="30"/> remonade - Unofficial Nature Remo CLI
+![](https://i.gyazo.com/e1e0e0e34c51b1bf1894bbd26a3f442b.png)
 
 ## Installation
 
@@ -33,15 +31,15 @@ $ remonade
 
 ### Key maps
 
-| Panel      | Key | Description |
-|------------|-----|-------------|
-| Common     | `j` | move down   |
-| Common     | `k` | move up     |
-| Common     | `h` | move left   |
-| Common     | `l` | move right  |
-| Appliances | `u` | Power on    |
-| Appliances | `d` | Power off   |
-
+| Panel      | Key | Description   |
+|------------|-----|---------------|
+| Common     | `j` | move down     |
+| Common     | `k` | move up       |
+| Common     | `h` | move left     |
+| Common     | `l` | move right    |
+| Appliances | `u` | Power on      |
+| Appliances | `d` | Power off     |
+| Appliances | `o` | Open settings |
 
 ## Author
 skanehira
