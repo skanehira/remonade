@@ -1,6 +1,9 @@
 package ui
 
 import (
+	"os"
+	"time"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"github.com/skanehira/remonade/config"
@@ -8,8 +11,12 @@ import (
 	"github.com/tenntenn/natureremo"
 )
 
-var UI *ui
-var Client *natureremo.Client
+const INTERVAL = 1
+
+var (
+	UI     *ui
+	Client *natureremo.Client
+)
 
 type ui struct {
 	app        *tview.Application
@@ -28,33 +35,38 @@ func (ui *ui) Modal(p tview.Primitive, width, height int) tview.Primitive {
 		AddItem(p, 1, 1, 1, 1, 0, 0, true)
 }
 
-func (ui *ui) Message(msg string, focusFunc func()) {
+func (ui *ui) Message(msg string) {
+	oldFocus := ui.app.GetFocus()
 	modal := tview.NewModal().
 		SetText(msg).
 		AddButtons([]string{"OK"}).
 		SetDoneFunc(func(_ int, _ string) {
 			ui.pages.RemovePage("message").ShowPage("main")
-			focusFunc()
+			ui.app.SetFocus(oldFocus)
 		})
-	ui.pages.AddAndSwitchToPage("message", ui.Modal(modal, 80, 29), true).ShowPage("main")
+	UI.app.QueueUpdateDraw(func() {
+		ui.pages.AddPage("message", ui.Modal(modal, 80, 29), true, true).SendToFront("message")
+	})
 }
 
-func (ui *ui) Confirm(msg, doLabel string, doFunc func() error, focusFunc func()) {
+func (ui *ui) Confirm(msg, doLabel string, doFunc func() error) {
+	oldFocus := ui.app.GetFocus()
 	modal := tview.NewModal().
 		SetText(msg).
 		AddButtons([]string{doLabel, "Cancel"}).
 		SetDoneFunc(func(_ int, buttonLabel string) {
 			ui.pages.RemovePage("modal").ShowPage("main")
-			focusFunc()
+			ui.app.SetFocus(oldFocus)
 			if buttonLabel == doLabel {
 				if err := doFunc(); err != nil {
-					ui.Message(err.Error(), func() {
-						focusFunc()
-					})
+					ui.Message(err.Error())
+					ui.app.SetFocus(oldFocus)
 				}
 			}
 		})
-	ui.pages.AddAndSwitchToPage("modal", ui.Modal(modal, 80, 29), true).ShowPage("main")
+	UI.app.QueueUpdateDraw(func() {
+		ui.pages.AddPage("modal", ui.Modal(modal, 80, 29), true, true).SendToFront("modal")
+	})
 }
 
 func (ui *ui) next() {
@@ -87,65 +99,70 @@ func (ui *ui) prev() {
 
 }
 
-func (ui *ui) Start() {
+func Start() {
+	Client = natureremo.NewClient(config.Config.Token)
+	endpoint := os.Getenv("NATURE_REMO_ENDPOINT")
+	if endpoint != "" {
+		Client.BaseURL = endpoint
+	}
+
+	UI = &ui{
+		app: tview.NewApplication(),
+	}
+
 	// for readability
 	row, col, rowSpan, colSpan := 0, 0, 0, 0
 
 	events := NewEvents()
-	user := NewHeader()
+	header := NewHeader()
 	devices := NewDevices()
 	apps := NewAppliances()
 
-	ui.primitives = []tview.Primitive{
+	UI.primitives = []tview.Primitive{
 		devices,
 		apps,
 		events,
 	}
 
-	ui.events = events
-	ui.devices = devices
-	ui.appliances = apps
+	UI.events = events
+	UI.devices = devices
+	UI.appliances = apps
 
 	// nolint gomnd
 	grid := tview.NewGrid().SetRows(1, 0, 0).SetColumns(0, 0, 0).
-		AddItem(user, row, col, rowSpan+1, colSpan+3, 0, 0, true).
+		AddItem(header, row, col, rowSpan+1, colSpan+3, 0, 0, true).
 		AddItem(devices, row+1, col, rowSpan+1, colSpan+2, 0, 0, true).
 		AddItem(apps, row+2, col, rowSpan+1, colSpan+2, 0, 0, true).
 		AddItem(events, row+1, col+2, rowSpan+2, colSpan+1, 0, 0, true)
 
-	ui.pages = tview.NewPages().
+	UI.pages = tview.NewPages().
 		AddAndSwitchToPage("main", grid, true)
 
-	ui.app.SetRoot(ui.pages, true)
-	ui.app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+	UI.app.SetRoot(UI.pages, true)
+	UI.app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlN:
-			ui.next()
+			UI.next()
 		case tcell.KeyCtrlP:
-			ui.prev()
+			UI.prev()
 		}
 		return event
 	})
 
-	ui.app.SetFocus(devices)
+	UI.app.SetFocus(apps)
 
-	if err := ui.app.Run(); err != nil {
-		ui.app.Stop()
+	Dispatcher.Dispatch(GetAppliances, nil)
+	Dispatcher.Dispatch(GetDevices, nil)
+
+	go func() {
+		t := time.NewTicker(INTERVAL * time.Hour)
+		for range t.C {
+			Dispatcher.Dispatch(GetDevices, nil)
+		}
+	}()
+
+	if err := UI.app.Run(); err != nil {
+		UI.app.Stop()
 		util.ExitError(err)
 	}
-}
-
-func NewUI() {
-	config.Init()
-	Client = natureremo.NewClient(config.Config.Token)
-	ui := &ui{
-		app: tview.NewApplication(),
-	}
-
-	UI = ui
-}
-
-func Run() {
-	NewUI()
-	UI.Start()
 }

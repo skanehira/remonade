@@ -1,18 +1,13 @@
 package ui
 
 import (
-	"context"
-	"fmt"
-	"time"
-
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
-const INTERVAL = 3
-
 type Events struct {
 	*tview.Table
+	header []string
 }
 
 func NewEvents() *Events {
@@ -24,13 +19,19 @@ func NewEvents() *Events {
 	e.SetFixed(1, 0).SetBorder(true)
 	e.Clear().SetBorderColor(tcell.ColorGreen)
 
-	headers := []string{
+	e.header = []string{
 		"Type",
 		"Value",
 		"Created",
 	}
 
-	for i, h := range headers {
+	return e
+}
+
+func (e *Events) UpdateView(events []Event) {
+	e.Clear()
+
+	for i, h := range e.header {
 		e.SetCell(0, i, &tview.TableCell{
 			Text:            h,
 			NotSelectable:   true,
@@ -41,54 +42,19 @@ func NewEvents() *Events {
 		})
 	}
 
-	devices, err := Client.DeviceService.GetAll(context.Background())
-	if err != nil {
-		return e
+	rows := make([][]string, len(events))
+	for i, e := range events {
+		rows[i] = []string{
+			e.Type,
+			e.Value,
+			e.Created.Local().Format(dateFormat),
+		}
 	}
 
-	update := func() {
-		row := e.GetRowCount()
-		var lines [][]string
-		for _, dev := range devices {
-			var cols []string
-			for st, v := range dev.NewestEvents {
-				cols = append(cols, []string{
-					string(st),
-					fmt.Sprintf("%v", v.Value),
-					v.CreatedAt.Local().Format(dateFormat),
-				}...)
-			}
-			lines = append(lines, cols)
-		}
-
-		go UI.app.QueueUpdateDraw(func() {
-			for i, rows := range lines {
-				for j, col := range rows {
-					cell := tview.NewTableCell(col).SetTextColor(tcell.ColorWhite)
-					e.SetCell(i+row, j, cell)
-				}
-			}
-		})
-	}
-
-	go func() {
-		t := time.NewTicker(INTERVAL * time.Minute)
-		for range t.C {
-			update()
-		}
-	}()
-
-	update()
-
-	return e
-}
-
-func (e *Events) AppendRow(cols []string) {
-	go UI.app.QueueUpdateDraw(func() {
-		row := e.GetRowCount()
-		for i, col := range cols {
+	for i, rows := range rows {
+		for j, col := range rows {
 			cell := tview.NewTableCell(col).SetTextColor(tcell.ColorWhite)
-			e.SetCell(row, i, cell)
+			e.SetCell(i+1, j, cell)
 		}
-	})
+	}
 }

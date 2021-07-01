@@ -12,7 +12,7 @@ var rootCmd = &cobra.Command{
 
 func Execute() {
 	rootCmd.Run = func(cmd *cobra.Command, args []string) {
-		ui.Run()
+		ui.Start()
 	}
 
 	if err := rootCmd.Execute(); err != nil {
