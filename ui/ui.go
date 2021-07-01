@@ -44,7 +44,9 @@ func (ui *ui) Message(msg string) {
 			ui.pages.RemovePage("message").ShowPage("main")
 			ui.app.SetFocus(oldFocus)
 		})
-	ui.pages.AddAndSwitchToPage("message", ui.Modal(modal, 80, 29), true).ShowPage("main")
+	UI.app.QueueUpdateDraw(func() {
+		ui.pages.AddPage("message", ui.Modal(modal, 80, 29), true, true).SendToFront("message")
+	})
 }
 
 func (ui *ui) Confirm(msg, doLabel string, doFunc func() error) {
@@ -62,7 +64,9 @@ func (ui *ui) Confirm(msg, doLabel string, doFunc func() error) {
 				}
 			}
 		})
-	ui.pages.AddAndSwitchToPage("modal", ui.Modal(modal, 80, 29), true).ShowPage("main")
+	UI.app.QueueUpdateDraw(func() {
+		ui.pages.AddPage("modal", ui.Modal(modal, 80, 29), true, true).SendToFront("modal")
+	})
 }
 
 func (ui *ui) next() {
