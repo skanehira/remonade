@@ -139,7 +139,7 @@ func Start() {
 		return event
 	})
 
-	UI.app.SetFocus(devices)
+	UI.app.SetFocus(apps)
 
 	Dispatcher.Dispatch(GetAppliances, nil)
 	Dispatcher.Dispatch(GetDevices, nil)
