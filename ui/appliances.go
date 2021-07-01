@@ -64,7 +64,7 @@ func NewAppliances() *Appliances {
 			Dispatcher.Dispatch(PowerON, row)
 		case 'd':
 			Dispatcher.Dispatch(PowerOFF, row)
-		case 'e':
+		case 'o':
 			Dispatcher.Dispatch(OpenUpdateApplianceView, row)
 		}
 		return event
