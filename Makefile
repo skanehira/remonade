@@ -1,3 +1,5 @@
+SHELL=/bin/bash
+
 .PHONY: init
 init:
 ifeq ($(shell uname -s),Darwin)
@@ -21,3 +23,7 @@ withmock: mock
 .PHONY: debug
 debug:
 	@DEBUG=1 go run main.go
+
+.PHONY: clean
+clean:
+	@rm -rf e2e/nature_remo_mock

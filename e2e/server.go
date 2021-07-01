@@ -14,7 +14,6 @@ func main() {
 	path := filepath.Join("testdata", "all.json")
 	f, err := os.Open(path)
 	if err != nil {
-		log.Println(err)
 		return
 	}
 	m := map[string]interface{}{}
@@ -33,7 +32,6 @@ func main() {
 		w.Header().Add("X-Rate-Limit-Reset", fmt.Sprintf("%d", time.Now().Unix()))
 
 		_ = r.ParseForm()
-		log.Println(r.Form.Encode())
 
 		var respBody interface{}
 		switch r.URL.Path {
@@ -46,7 +44,6 @@ func main() {
 		}
 
 		if err := json.NewEncoder(w).Encode(respBody); err != nil {
-			log.Println("decode error", err)
 			return
 		}
 	})
