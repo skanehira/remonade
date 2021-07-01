@@ -20,8 +20,8 @@ stopmock:
 withmock: mock
 	@DEBUG=1 NATURE_REMO_ENDPOINT=http://localhost:9999 go run main.go
 
-.PHONY: debug
-debug:
+.PHONY: run
+run:
 	@DEBUG=1 go run main.go
 
 .PHONY: clean
