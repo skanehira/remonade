@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"os"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -96,6 +97,11 @@ func (ui *ui) prev() {
 
 func Start() {
 	Client = natureremo.NewClient(config.Config.Token)
+	endpoint := os.Getenv("NATURE_REMO_ENDPOINT")
+	if endpoint != "" {
+		Client.BaseURL = endpoint
+	}
+
 	UI = &ui{
 		app: tview.NewApplication(),
 	}
