@@ -219,6 +219,88 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 	UI.pages.AddPage("form", UI.Modal(form, 50, 15), true, true).SendToFront("form")
 }
 
+type LightSetting struct {
+	ID    string // appliance id
+	Type  string // button or signal
+	Value string // button name or signal id
+}
+
+func (a *Appliances) OpenUpdateLightView(app *natureremo.Appliance) {
+	table := tview.NewTable().SetSelectable(true, false)
+	table.SetTitle(" Light Settings ").SetTitleAlign(tview.AlignLeft)
+	table.SetFixed(1, 0).SetBorder(true)
+
+	header := []string{
+		"Type",
+		"Name",
+		"Value",
+	}
+
+	for i, h := range header {
+		table.SetCell(0, i, &tview.TableCell{
+			Text:            h,
+			NotSelectable:   true,
+			Align:           tview.AlignLeft,
+			Color:           tcell.ColorWhite,
+			BackgroundColor: tcell.ColorDefault,
+			Attributes:      tcell.AttrBold | tcell.AttrUnderline,
+		})
+	}
+
+	list := make([][]string, len(app.Light.Buttons)+len(app.Signals))
+	for i, button := range app.Light.Buttons {
+		list[i] = []string{
+			"button",
+			button.Name,
+			button.Label,
+		}
+	}
+	for i, signal := range app.Signals {
+		list[len(app.Light.Buttons)+i] = []string{
+			"signal",
+			signal.Name,
+			signal.ID,
+		}
+	}
+
+	for i, row := range list {
+		for j, col := range row {
+			cell := tview.NewTableCell(col).SetTextColor(tcell.ColorWhite)
+			table.SetCell(i+1, j, cell)
+		}
+	}
+
+	table.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Key() == tcell.KeyEnter {
+			row, _ := table.GetSelection()
+			row--
+			if len(list) <= row {
+				return event
+			}
+			selected := list[row]
+			setting := LightSetting{
+				ID:   app.ID,
+				Type: selected[0],
+			}
+			if setting.Type == "button" {
+				setting.Value = selected[1]
+			} else {
+				setting.Value = selected[2]
+			}
+			Dispatcher.Dispatch(ActionUpdateLight, setting)
+		}
+
+		switch event.Rune() {
+		case 'c', 'q':
+			UI.pages.RemovePage("light").ShowPage("main")
+			UI.app.SetFocus(a)
+		}
+		return event
+	})
+
+	UI.pages.AddPage("light", UI.Modal(table, 60, 15), true, true).SendToFront("light")
+}
+
 func makeApplianceRow(app *natureremo.Appliance) []string {
 	var row []string
 
