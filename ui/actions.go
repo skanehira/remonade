@@ -3,6 +3,7 @@ package ui
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/jinzhu/copier"
 	"github.com/tenntenn/natureremo"
@@ -93,7 +94,7 @@ func ActionOpenUpdateApplianceView(state *State, cli *natureremo.Client, ctx int
 	case natureremo.ApplianceTypeAirCon:
 		UI.appliances.OpenUpdateAirConView(app)
 	case natureremo.ApplianceTypeLight:
-		// TODO
+		UI.appliances.OpenUpdateLightView(app)
 	}
 
 	return nil
@@ -151,6 +152,32 @@ func ActionUpdateAirConSettings(state *State, cli *natureremo.Client, ctx interf
 	// so copier doesn't copy button
 	oldapp.AirConSettings.Button = settings.Button
 
+	return nil
+}
+
+func ActionUpdateLight(state *State, cli *natureremo.Client, ctx interface{}) error {
+	setting, ok := ctx.(LightSetting)
+	if !ok {
+		return fmt.Errorf("ctx is invalid type: %T", ctx)
+	}
+
+	log.Printf("action update light: ctx: %#+v", setting)
+	if setting.Type == "button" {
+		app := &natureremo.Appliance{
+			ID: setting.ID,
+		}
+		// TODO update light state
+		if _, err := cli.ApplianceService.SendLightSignal(context.Background(), app, setting.Value); err != nil {
+			return err
+		}
+	} else {
+		signal := &natureremo.Signal{
+			ID: setting.Value,
+		}
+		if err := cli.SignalService.Send(context.Background(), signal); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
