@@ -4,12 +4,14 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/skanehira/remonade/util"
 )
 
 func TestRunInit(t *testing.T) {
 	t.Run("empty token", func(t *testing.T) {
 		tmp := filepath.Join(os.TempDir(), "d")
-		if !notExist(tmp) {
+		if !util.NotExist(tmp) {
 			if err := os.RemoveAll(tmp); err != nil {
 				t.Fatal(err)
 			}
@@ -34,7 +36,7 @@ func TestRunInit(t *testing.T) {
 func TestRunEdit(t *testing.T) {
 	t.Run("no exists config", func(t *testing.T) {
 		tmp := filepath.Join(os.TempDir(), "d")
-		if !notExist(tmp) {
+		if !util.NotExist(tmp) {
 			if err := os.RemoveAll(tmp); err != nil {
 				t.Fatal(err)
 			}
