@@ -151,13 +151,13 @@ func Start() {
 
 	UI.app.SetFocus(apps)
 
-	Dispatcher.Dispatch(GetAppliances, nil)
-	Dispatcher.Dispatch(GetDevices, nil)
+	Dispatcher.Dispatch(ActionGetAppliances, nil)
+	Dispatcher.Dispatch(ActionGetDevices, nil)
 
 	go func() {
 		t := time.NewTicker(INTERVAL * time.Hour)
 		for range t.C {
-			Dispatcher.Dispatch(GetDevices, nil)
+			Dispatcher.Dispatch(ActionGetDevices, nil)
 		}
 	}()
 
