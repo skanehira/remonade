@@ -28,11 +28,11 @@ type UpdateAirConFormData struct {
 
 func (u UpdateAirConFormData) String() string {
 	m := map[string]interface{}{
-		"Power":     u.Power.Values[u.Power.Current],
-		"Mode":      u.Mode.Values[u.Mode.Current],
-		"Temp":      u.Temp.Values[u.Temp.Current],
-		"Volume":    u.Volume.Values[u.Volume.Current],
-		"Direction": u.Direction.Values[u.Direction.Current],
+		"Power":     u.Power.Value(),
+		"Mode":      u.Mode.Value(),
+		"Temp":      u.Temp.Value(),
+		"Volume":    u.Volume.Value(),
+		"Direction": u.Direction.Value(),
 	}
 
 	b, err := json.Marshal(&m)
