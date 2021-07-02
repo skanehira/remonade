@@ -3,15 +3,13 @@ package ui
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 
 	"github.com/google/go-cmp/cmp"
 )
 
 type dispatcher struct {
-	state   *State
-	actions map[Action]ActionFunc
+	state *State
 }
 
 func copyState(state *State) *State {
@@ -32,15 +30,8 @@ func copyState(state *State) *State {
 }
 
 func (d *dispatcher) Dispatch(action Action, ctx interface{}) {
-	f, ok := d.actions[action]
-	if !ok {
-		msg := fmt.Sprintf("doesn't register action: %v\n", action)
-		UI.Message(msg)
-		return
-	}
-
 	old := copyState(d.state)
-	err := f(d.state, action, ctx)
+	err := action(d.state, Client, ctx)
 	if err != nil {
 		UI.Message(err.Error())
 		return
@@ -69,13 +60,5 @@ var Dispatcher *dispatcher
 func init() {
 	Dispatcher = &dispatcher{
 		state: &State{},
-		actions: map[Action]ActionFunc{
-			GetAppliances:           ActionGetAppliances,
-			GetDevices:              ActionGetDevices,
-			PowerON:                 ActionAppliancesPower,
-			PowerOFF:                ActionAppliancesPower,
-			OpenUpdateApplianceView: ActionOpenUpdateApplianceView,
-			UpdateAirConSettings:    ActionOpenUpdateAirConSettings,
-		},
 	}
 }

@@ -9,22 +9,10 @@ import (
 
 type (
 	// process action, must return new state
-	ActionFunc func(state *State, action Action, ctx interface{}) error
+	Action func(state *State, cli *natureremo.Client, ctx interface{}) error
 )
 
-// Action type
-type Action string
-
-var (
-	GetAppliances           Action = "get appliances"
-	GetDevices              Action = "get devices"
-	PowerON                 Action = "power on"
-	PowerOFF                Action = "power off"
-	OpenUpdateApplianceView Action = "open update appliance view"
-	UpdateAirConSettings    Action = "update aircon settings"
-)
-
-func ActionGetAppliances(state *State, action Action, ctx interface{}) error {
+func ActionGetAppliances(state *State, cli *natureremo.Client, ctx interface{}) error {
 	apps, err := Client.ApplianceService.GetAll(context.Background())
 	if err != nil {
 		return err
@@ -33,7 +21,7 @@ func ActionGetAppliances(state *State, action Action, ctx interface{}) error {
 	return nil
 }
 
-func ActionGetDevices(state *State, action Action, ctx interface{}) error {
+func ActionGetDevices(state *State, cli *natureremo.Client, ctx interface{}) error {
 	devices, err := Client.DeviceService.GetAll(context.Background())
 	if err != nil {
 		return err
@@ -51,33 +39,41 @@ func ActionGetDevices(state *State, action Action, ctx interface{}) error {
 	return nil
 }
 
-func ActionAppliancesPower(state *State, action Action, ctx interface{}) error {
-	app, err := getAppliance(state, ctx)
+func ActionAppliancesPower(state *State, cli *natureremo.Client, ctx interface{}) error {
+	data, ok := ctx.(AppliancePowerOnOff)
+	if !ok {
+		return fmt.Errorf(`ctx is not "AppliancePowerOnOff": %T`, ctx)
+	}
+
+	var row interface{} = data.Row
+	app, err := getAppliance(state, row)
 	if err != nil {
 		return err
 	}
 
-	on := action == PowerON
+	on := data.Power == natureremo.ButtonPowerOn
 
 	switch app.Type {
 	case natureremo.ApplianceTypeAirCon:
-		app.AirConSettings.Button = natureremo.ButtonPowerOn
-
+		btn := natureremo.ButtonPowerOn
 		if !on {
-			app.AirConSettings.Button = natureremo.ButtonPowerOff
+			btn = natureremo.ButtonPowerOff
 		}
-		err = Client.ApplianceService.
-			UpdateAirConSettings(context.Background(), app, app.AirConSettings)
+		settings := &natureremo.AirConSettings{
+			Button: btn,
+		}
+		err = cli.ApplianceService.
+			UpdateAirConSettings(context.Background(), app, settings)
 	case natureremo.ApplianceTypeLight:
 		power := "on"
 		if !on {
 			power = "off"
 		}
 		app.Light.State.Power = power
-		_, err = Client.ApplianceService.SendLightSignal(context.Background(), app, power)
+		_, err = cli.ApplianceService.SendLightSignal(context.Background(), app, power)
 	case natureremo.ApplianceTypeTV:
 		btn := "power"
-		_, err = Client.ApplianceService.SendTVSignal(context.Background(), app, btn)
+		_, err = cli.ApplianceService.SendTVSignal(context.Background(), app, btn)
 	default:
 		return fmt.Errorf("unsupported appliance: %v", app.Type)
 	}
@@ -85,7 +81,7 @@ func ActionAppliancesPower(state *State, action Action, ctx interface{}) error {
 	return err
 }
 
-func ActionOpenUpdateApplianceView(state *State, action Action, ctx interface{}) error {
+func ActionOpenUpdateApplianceView(state *State, cli *natureremo.Client, ctx interface{}) error {
 	app, err := getAppliance(state, ctx)
 	if err != nil {
 		return err
@@ -101,7 +97,7 @@ func ActionOpenUpdateApplianceView(state *State, action Action, ctx interface{})
 	return nil
 }
 
-func ActionOpenUpdateAirConSettings(state *State, action Action, ctx interface{}) error {
+func ActionUpdateAirConSettings(state *State, cli *natureremo.Client, ctx interface{}) error {
 	data, ok := ctx.(map[string]UpdateAirConFormData)
 	if !ok {
 		return fmt.Errorf(`ctx type is not valid type: %T`, ctx)
