@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
 
 	"github.com/skanehira/remonade/config"
 	"github.com/skanehira/remonade/util"
@@ -26,28 +25,17 @@ func runInit(path string) error {
 		err error
 	)
 
-	if notExist(path) {
-		base := filepath.Dir(path)
-		if notExist(base) {
-			if err := os.Mkdir(base, os.ModePerm); err != nil {
-				return err
-			}
-		}
-
-		f, err = os.Create(path)
-		if err != nil {
+	if util.NotExist(path) {
+		if err = config.Create(path); err != nil {
 			return err
 		}
-		defer f.Close()
-
-		fmt.Println("config file: " + path)
-	} else {
-		f, err = os.OpenFile(path, os.O_WRONLY, 0)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
 	}
+
+	f, err = os.OpenFile(path, os.O_WRONLY, 0)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
 
 	fmt.Print("Your access token: ")
 	sc := bufio.NewScanner(os.Stdin)
@@ -63,7 +51,7 @@ func runInit(path string) error {
 }
 
 func runEdit(path string) error {
-	if notExist(path) {
+	if util.NotExist(path) {
 		return ErrNotExistConfig
 	}
 
@@ -77,11 +65,6 @@ func runEdit(path string) error {
 	cmd.Stderr = os.Stderr
 
 	return cmd.Run()
-}
-
-func notExist(path string) bool {
-	_, err := os.Stat(path)
-	return errors.Is(err, os.ErrNotExist)
 }
 
 func run(cmd *cobra.Command, args []string) {
