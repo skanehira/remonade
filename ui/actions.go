@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jinzhu/copier"
 	"github.com/tenntenn/natureremo"
 )
 
@@ -62,6 +63,7 @@ func ActionAppliancesPower(state *State, cli *natureremo.Client, ctx interface{}
 		settings := &natureremo.AirConSettings{
 			Button: btn,
 		}
+		app.AirConSettings.Button = btn
 		err = cli.ApplianceService.
 			UpdateAirConSettings(context.Background(), app, settings)
 	case natureremo.ApplianceTypeLight:
@@ -98,21 +100,23 @@ func ActionOpenUpdateApplianceView(state *State, cli *natureremo.Client, ctx int
 }
 
 func ActionUpdateAirConSettings(state *State, cli *natureremo.Client, ctx interface{}) error {
-	data, ok := ctx.(map[string]UpdateAirConFormData)
+	data, ok := ctx.(map[int]UpdateAirConFormData)
 	if !ok {
-		return fmt.Errorf(`ctx type is not valid type: %T`, ctx)
+		return fmt.Errorf(`ctx is invalid type: %T`, ctx)
 	}
 
 	var (
-		id   string
+		idx  int
 		form UpdateAirConFormData
 	)
 
-	for id, form = range data {
+	for idx, form = range data {
 		break
 	}
 
-	app := &natureremo.Appliance{ID: id}
+	oldapp := state.Appliances[idx]
+
+	app := &natureremo.Appliance{ID: oldapp.ID}
 	settings := &natureremo.AirConSettings{}
 
 	if form.Power.Value() == "ON" {
@@ -138,11 +142,14 @@ func ActionUpdateAirConSettings(state *State, cli *natureremo.Client, ctx interf
 		return err
 	}
 
-	newApps, err := Client.ApplianceService.GetAll(context.Background())
+	err := copier.CopyWithOption(oldapp.AirConSettings, settings,
+		copier.Option{IgnoreEmpty: true, DeepCopy: true})
 	if err != nil {
 		return err
 	}
-	state.Appliances = newApps
+	// NOTE copier option is ignore empty, but when power is on, the value is empty
+	// so copier doesn't copy button
+	oldapp.AirConSettings.Button = settings.Button
 
 	return nil
 }

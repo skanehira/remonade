@@ -93,7 +93,8 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 
 	viewData := ToUpdateAirConViewData(app)
 
-	dispatcher := make(chan map[string]UpdateAirConFormData)
+	row := a.GetSelect()
+	dispatcher := make(chan map[int]UpdateAirConFormData)
 
 	addTemp := func() {
 		form.AddDropDown("Temperature", viewData.Temp.Values, viewData.Temp.Current,
@@ -102,7 +103,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 					return
 				}
 				viewData.Temp.Current = idx
-				updateData := map[string]UpdateAirConFormData{app.ID: viewData}
+				updateData := map[int]UpdateAirConFormData{row: viewData}
 				dispatcher <- updateData
 			})
 	}
@@ -114,7 +115,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 					return
 				}
 				viewData.Volume.Current = idx
-				updateData := map[string]UpdateAirConFormData{app.ID: viewData}
+				updateData := map[int]UpdateAirConFormData{row: viewData}
 				dispatcher <- updateData
 			})
 	}
@@ -148,7 +149,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 				return
 			}
 			viewData.Power.Current = idx
-			updateData := map[string]UpdateAirConFormData{app.ID: viewData}
+			updateData := map[int]UpdateAirConFormData{row: viewData}
 			dispatcher <- updateData
 		})
 
@@ -158,7 +159,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 				return
 			}
 			viewData.Mode.Current = idx
-			updateData := map[string]UpdateAirConFormData{app.ID: viewData}
+			updateData := map[int]UpdateAirConFormData{row: viewData}
 			dispatcher <- updateData
 			toggleItems()
 		})
@@ -171,7 +172,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 				return
 			}
 			viewData.Direction.Current = idx
-			updateData := map[string]UpdateAirConFormData{app.ID: viewData}
+			updateData := map[int]UpdateAirConFormData{row: viewData}
 			dispatcher <- updateData
 		})
 	// update appliance with view data
