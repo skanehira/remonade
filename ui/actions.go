@@ -138,7 +138,7 @@ func ActionUpdateAirConSettings(state *State, cli *natureremo.Client, ctx interf
 		settings.Temperature = form.Temp.Value()
 	}
 
-	if err := Client.ApplianceService.UpdateAirConSettings(context.Background(), app, settings); err != nil {
+	if err := cli.ApplianceService.UpdateAirConSettings(context.Background(), app, settings); err != nil {
 		return err
 	}
 

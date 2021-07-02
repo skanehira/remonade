@@ -12,6 +12,10 @@ type dispatcher struct {
 	state *State
 }
 
+var Dispatcher = &dispatcher{
+	state: &State{},
+}
+
 func copyState(state *State) *State {
 	// NOTE "github.com/jinzhu/copier" doesn't copy time.Time, using json instead
 	// https://github.com/jinzhu/copier/pull/103
@@ -53,12 +57,4 @@ func (d *dispatcher) Dispatch(action Action, ctx interface{}) {
 			d.state.UpdateEvents()
 		}
 	})
-}
-
-var Dispatcher *dispatcher
-
-func init() {
-	Dispatcher = &dispatcher{
-		state: &State{},
-	}
 }
