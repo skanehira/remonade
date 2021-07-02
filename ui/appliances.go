@@ -40,6 +40,11 @@ func (a *Appliances) GetSelect() int {
 	return row
 }
 
+type AppliancePowerOnOff struct {
+	Power natureremo.Button
+	Row   int
+}
+
 func NewAppliances() *Appliances {
 	a := &Appliances{
 		Table: tview.NewTable().SetSelectable(true, false),
@@ -61,11 +66,19 @@ func NewAppliances() *Appliances {
 		row := a.GetSelect()
 		switch event.Rune() {
 		case 'u':
-			Dispatcher.Dispatch(PowerON, row)
+			ctx := AppliancePowerOnOff{
+				Power: natureremo.ButtonPowerOn,
+				Row:   row,
+			}
+			Dispatcher.Dispatch(ActionAppliancesPower, ctx)
 		case 'd':
-			Dispatcher.Dispatch(PowerOFF, row)
+			ctx := AppliancePowerOnOff{
+				Power: natureremo.ButtonPowerOff,
+				Row:   row,
+			}
+			Dispatcher.Dispatch(ActionAppliancesPower, ctx)
 		case 'o':
-			Dispatcher.Dispatch(OpenUpdateApplianceView, row)
+			Dispatcher.Dispatch(ActionOpenUpdateApplianceView, row)
 		}
 		return event
 	})
@@ -80,7 +93,8 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 
 	viewData := ToUpdateAirConViewData(app)
 
-	dispatcher := make(chan map[string]UpdateAirConFormData)
+	row := a.GetSelect()
+	dispatcher := make(chan map[int]UpdateAirConFormData)
 
 	addTemp := func() {
 		form.AddDropDown("Temperature", viewData.Temp.Values, viewData.Temp.Current,
@@ -89,7 +103,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 					return
 				}
 				viewData.Temp.Current = idx
-				updateData := map[string]UpdateAirConFormData{app.ID: viewData}
+				updateData := map[int]UpdateAirConFormData{row: viewData}
 				dispatcher <- updateData
 			})
 	}
@@ -101,7 +115,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 					return
 				}
 				viewData.Volume.Current = idx
-				updateData := map[string]UpdateAirConFormData{app.ID: viewData}
+				updateData := map[int]UpdateAirConFormData{row: viewData}
 				dispatcher <- updateData
 			})
 	}
@@ -135,7 +149,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 				return
 			}
 			viewData.Power.Current = idx
-			updateData := map[string]UpdateAirConFormData{app.ID: viewData}
+			updateData := map[int]UpdateAirConFormData{row: viewData}
 			dispatcher <- updateData
 		})
 
@@ -145,7 +159,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 				return
 			}
 			viewData.Mode.Current = idx
-			updateData := map[string]UpdateAirConFormData{app.ID: viewData}
+			updateData := map[int]UpdateAirConFormData{row: viewData}
 			dispatcher <- updateData
 			toggleItems()
 		})
@@ -158,13 +172,13 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 				return
 			}
 			viewData.Direction.Current = idx
-			updateData := map[string]UpdateAirConFormData{app.ID: viewData}
+			updateData := map[int]UpdateAirConFormData{row: viewData}
 			dispatcher <- updateData
 		})
 	// update appliance with view data
 	go func() {
 		for data := range dispatcher {
-			Dispatcher.Dispatch(UpdateAirConSettings, data)
+			Dispatcher.Dispatch(ActionUpdateAirConSettings, data)
 		}
 		log.Println("aircon settings dispatcher goroutine is closed")
 	}()
