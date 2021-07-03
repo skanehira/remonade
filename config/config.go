@@ -13,20 +13,24 @@ type config struct {
 	Token string `yaml:"token"`
 }
 
-var Config config
-var Path string
+var (
+	Config config
+	Path   string
+)
 
-func Init() {
+func init() {
 	path, err := os.UserConfigDir()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, fmt.Errorf("cannot get user config dir: %w", err))
 		os.Exit(1)
 	}
 	Path = filepath.Join(path, "remonade", "config.yaml")
+}
 
+func Load() {
 	if util.NotExist(Path) {
 		if err := Create(Path); err != nil {
-			util.ExitError(err)
+			util.ExitError(fmt.Errorf("cannot create file %s: %w", Path, err))
 		}
 		return
 	}
@@ -38,7 +42,7 @@ func Init() {
 	defer f.Close()
 
 	if err := yaml.NewDecoder(f).Decode(&Config); err != nil {
-		util.ExitError(err)
+		util.ExitError(fmt.Errorf("cannot decode %s: %w", Path, err))
 	}
 }
 
