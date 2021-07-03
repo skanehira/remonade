@@ -6,7 +6,6 @@
 ![GitHub Release Status](https://img.shields.io/github/workflow/status/skanehira/remonade/Release?label=release)
 
 # <img src="https://i.gyazo.com/85e13d8198dcb843ece467cad46350e7.png" width="30"/> remonade - Unofficial Nature Remo CLI
-**UNDER DEVELOPMENT**
 
 ![](https://i.gyazo.com/e1e0e0e34c51b1bf1894bbd26a3f442b.png)
 
@@ -29,6 +28,14 @@ $ remonade edit
 
 # run
 $ remonade
+```
+
+### Settings
+The following environment variables must be set.
+
+```sh
+export LC_CTYPE=en_US.UTF-8
+export TERM=xterm-256color
 ```
 
 ### Key maps
