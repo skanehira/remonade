@@ -34,10 +34,12 @@ $ remonade
 
 | Panel           | Key                | Description            |
 |-----------------|--------------------|------------------------|
-| Common          | `j`                | move down              |
-| Common          | `k`                | move up                |
-| Common          | `h`                | move left              |
-| Common          | `l`                | move right             |
+| Common          | `j`                | Move down              |
+| Common          | `k`                | Move up                |
+| Common          | `h`                | Move left              |
+| Common          | `l`                | Move right             |
+| Common          | `Ctrl+n`           | Next panel             |
+| Common          | `Ctrl+p`           | Previous panel         |
 | Appliances      | `u`                | Power on               |
 | Appliances      | `d`                | Power off              |
 | Appliances      | `o`                | Open settings          |
