@@ -66,18 +66,30 @@ func NewAppliances() *Appliances {
 		row := a.GetSelect()
 		switch event.Rune() {
 		case 'u':
+			if row == -1 {
+				UI.Message("there is not exists any appliances")
+				return event
+			}
 			ctx := AppliancePowerOnOff{
 				Power: natureremo.ButtonPowerOn,
 				Row:   row,
 			}
 			Dispatcher.Dispatch(ActionAppliancesPower, ctx)
 		case 'd':
+			if row == -1 {
+				UI.Message("there is not exists any appliances")
+				return event
+			}
 			ctx := AppliancePowerOnOff{
 				Power: natureremo.ButtonPowerOff,
 				Row:   row,
 			}
 			Dispatcher.Dispatch(ActionAppliancesPower, ctx)
 		case 'o':
+			if row == -1 {
+				UI.Message("there is not exists any appliances")
+				return event
+			}
 			Dispatcher.Dispatch(ActionOpenUpdateApplianceView, row)
 		}
 		return event
@@ -94,6 +106,10 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 	viewData := ToUpdateAirConViewData(app)
 
 	row := a.GetSelect()
+	if row == -1 {
+		UI.Message("there is not any aircon settings")
+		return
+	}
 	dispatcher := make(chan map[int]UpdateAirConFormData)
 
 	addTemp := func() {
