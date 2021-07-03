@@ -6,6 +6,7 @@
 ![GitHub Release Status](https://img.shields.io/github/workflow/status/skanehira/remonade/Release?label=release)
 
 # <img src="https://i.gyazo.com/85e13d8198dcb843ece467cad46350e7.png" width="30"/> remonade - Unofficial Nature Remo CLI
+**UNDER DEVELOPMENT**
 ![](https://i.gyazo.com/e1e0e0e34c51b1bf1894bbd26a3f442b.png)
 
 ## Installation
@@ -31,15 +32,21 @@ $ remonade
 
 ### Key maps
 
-| Panel      | Key | Description   |
-|------------|-----|---------------|
-| Common     | `j` | move down     |
-| Common     | `k` | move up       |
-| Common     | `h` | move left     |
-| Common     | `l` | move right    |
-| Appliances | `u` | Power on      |
-| Appliances | `d` | Power off     |
-| Appliances | `o` | Open settings |
+| Panel           | Key                | Description            |
+|-----------------|--------------------|------------------------|
+| Common          | `j`                | move down              |
+| Common          | `k`                | move up                |
+| Common          | `h`                | move left              |
+| Common          | `l`                | move right             |
+| Appliances      | `u`                | Power on               |
+| Appliances      | `d`                | Power off              |
+| Appliances      | `o`                | Open settings          |
+| AirCon Settings | `q`, `c`           | Close                  |
+| AirCon Settings | `Ctrl+n`, `Ctrl+j` | Next item              |
+| AirCon Settings | `Ctrl+p`, `Ctrl+k` | Previous item          |
+| AirCon Settings | `Enter`, `j`, `k`  | Change value           |
+| Light Settings  | `Enter`            | Apply button or signal |
+
 
 ## Author
 skanehira
