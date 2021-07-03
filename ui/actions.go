@@ -98,6 +98,10 @@ func ActionOpenUpdateApplianceView(state *State, cli *natureremo.Client, ctx int
 		UI.appliances.OpenUpdateAirConView(app)
 	case natureremo.ApplianceTypeLight:
 		UI.appliances.OpenUpdateLightView(app)
+	case natureremo.ApplianceTypeTV:
+		UI.appliances.OpenUpdateTVView(app)
+	case natureremo.ApplianceTypeIR:
+		// TODO
 	}
 
 	return nil
@@ -179,6 +183,25 @@ func ActionUpdateLight(state *State, cli *natureremo.Client, ctx interface{}) er
 		}
 		if err := cli.SignalService.Send(context.Background(), signal); err != nil {
 			return err
+		}
+	}
+	return nil
+}
+
+func ActionSendTVButton(state *State, cli *natureremo.Client, ctx interface{}) error {
+	setting, ok := ctx.(TVSetting)
+	if !ok {
+		return fmt.Errorf(`ctx is not "TVSetting": %T`, ctx)
+	}
+	app := &natureremo.Appliance{ID: setting.ID}
+	tvState, err := cli.ApplianceService.SendTVSignal(context.Background(), app, setting.Button)
+	if err != nil {
+		return err
+	}
+
+	for _, app := range state.Appliances {
+		if app.ID == setting.ID {
+			app.TV.State = tvState
 		}
 	}
 	return nil

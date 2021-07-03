@@ -301,6 +301,74 @@ func (a *Appliances) OpenUpdateLightView(app *natureremo.Appliance) {
 	UI.pages.AddPage("light", UI.Modal(table, 60, 15), true, true).SendToFront("light")
 }
 
+type TVSetting struct {
+	ID     string // appliance id
+	Button string // TV button
+}
+
+func (a *Appliances) OpenUpdateTVView(app *natureremo.Appliance) {
+	table := tview.NewTable().SetSelectable(true, false)
+	table.SetTitle(" TV Buttons ").SetTitleAlign(tview.AlignLeft)
+	table.SetFixed(1, 0).SetBorder(true)
+	pageName := "TV"
+
+	header := []string{
+		"Label",
+		"Name",
+	}
+
+	for i, h := range header {
+		table.SetCell(0, i, &tview.TableCell{
+			Text:            h,
+			NotSelectable:   true,
+			Align:           tview.AlignLeft,
+			Color:           tcell.ColorWhite,
+			BackgroundColor: tcell.ColorDefault,
+			Attributes:      tcell.AttrBold | tcell.AttrUnderline,
+		})
+	}
+
+	list := make([][]string, len(app.TV.Buttons))
+	for i, button := range app.TV.Buttons {
+		list[i] = []string{
+			button.Label,
+			button.Name,
+		}
+	}
+
+	for i, row := range list {
+		for j, col := range row {
+			cell := tview.NewTableCell(col).SetTextColor(tcell.ColorWhite)
+			table.SetCell(i+1, j, cell)
+		}
+	}
+
+	table.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Key() == tcell.KeyEnter {
+			row, _ := table.GetSelection()
+			row--
+			if len(list) <= row {
+				return event
+			}
+			selected := list[row]
+			setting := TVSetting{
+				ID:     app.ID,
+				Button: selected[1],
+			}
+			Dispatcher.Dispatch(ActionSendTVButton, setting)
+		}
+
+		switch event.Rune() {
+		case 'c', 'q':
+			UI.pages.RemovePage(pageName).ShowPage("main")
+			UI.app.SetFocus(a)
+		}
+		return event
+	})
+
+	UI.pages.AddPage(pageName, UI.Modal(table, 60, 15), true, true).SendToFront(pageName)
+}
+
 func makeApplianceRow(app *natureremo.Appliance) []string {
 	var row []string
 
