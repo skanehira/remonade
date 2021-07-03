@@ -369,6 +369,66 @@ func (a *Appliances) OpenUpdateTVView(app *natureremo.Appliance) {
 	UI.pages.AddPage(pageName, UI.Modal(table, 60, 15), true, true).SendToFront(pageName)
 }
 
+func (a *Appliances) OpenUpdateIRView(app *natureremo.Appliance) {
+	table := tview.NewTable().SetSelectable(true, false)
+	table.SetTitle(" IR Signals ").SetTitleAlign(tview.AlignLeft)
+	table.SetFixed(1, 0).SetBorder(true)
+	pageName := "IR"
+
+	header := []string{
+		"Name",
+		"Value",
+	}
+
+	for i, h := range header {
+		table.SetCell(0, i, &tview.TableCell{
+			Text:            h,
+			NotSelectable:   true,
+			Align:           tview.AlignLeft,
+			Color:           tcell.ColorWhite,
+			BackgroundColor: tcell.ColorDefault,
+			Attributes:      tcell.AttrBold | tcell.AttrUnderline,
+		})
+	}
+
+	list := make([][]string, len(app.Signals))
+	for i, sig := range app.Signals {
+		list[i] = []string{
+			sig.Name,
+			sig.ID,
+		}
+	}
+
+	for i, row := range list {
+		for j, col := range row {
+			cell := tview.NewTableCell(col).SetTextColor(tcell.ColorWhite)
+			table.SetCell(i+1, j, cell)
+		}
+	}
+
+	table.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Key() == tcell.KeyEnter {
+			row, _ := table.GetSelection()
+			row--
+			if len(list) <= row {
+				return event
+			}
+			selected := list[row]
+			signal := selected[1]
+			Dispatcher.Dispatch(ActionSendSignal, signal)
+		}
+
+		switch event.Rune() {
+		case 'c', 'q':
+			UI.pages.RemovePage(pageName).ShowPage("main")
+			UI.app.SetFocus(a)
+		}
+		return event
+	})
+
+	UI.pages.AddPage(pageName, UI.Modal(table, 60, 15), true, true).SendToFront(pageName)
+}
+
 func makeApplianceRow(app *natureremo.Appliance) []string {
 	var row []string
 

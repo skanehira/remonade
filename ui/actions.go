@@ -101,7 +101,9 @@ func ActionOpenUpdateApplianceView(state *State, cli *natureremo.Client, ctx int
 	case natureremo.ApplianceTypeTV:
 		UI.appliances.OpenUpdateTVView(app)
 	case natureremo.ApplianceTypeIR:
-		// TODO
+		UI.appliances.OpenUpdateIRView(app)
+	default:
+		return fmt.Errorf("unsupported appliance type: %s", app.Type)
 	}
 
 	return nil
@@ -203,6 +205,21 @@ func ActionSendTVButton(state *State, cli *natureremo.Client, ctx interface{}) e
 		if app.ID == setting.ID {
 			app.TV.State = tvState
 		}
+	}
+	return nil
+}
+
+func ActionSendSignal(state *State, cli *natureremo.Client, ctx interface{}) error {
+	id, ok := ctx.(string)
+	if !ok {
+		return fmt.Errorf("ctx is not string: %T", ctx)
+	}
+
+	signal := &natureremo.Signal{
+		ID: id,
+	}
+	if err := cli.SignalService.Send(context.Background(), signal); err != nil {
+		return err
 	}
 	return nil
 }

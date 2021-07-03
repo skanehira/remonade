@@ -34,6 +34,7 @@ func copyState(state *State) *State {
 }
 
 func (d *dispatcher) Dispatch(action Action, ctx interface{}) {
+	log.Printf("state: %#+v, ctx: %#+v", d.state, ctx)
 	old := copyState(d.state)
 	err := action(d.state, Client, ctx)
 	if err != nil {
