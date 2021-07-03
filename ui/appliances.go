@@ -70,9 +70,16 @@ func NewAppliances() *Appliances {
 				UI.Message("there is not exists any appliances")
 				return event
 			}
-			ctx := AppliancePowerOnOff{
+			data := AppliancePowerOnOff{
 				Power: natureremo.ButtonPowerOn,
 				Row:   row,
+			}
+			ctx := Context{
+				Event: Event{
+					Type:  "Appliance",
+					Value: "Power On",
+				},
+				Data: data,
 			}
 			Dispatcher.Dispatch(ActionAppliancesPower, ctx)
 		case 'd':
@@ -80,9 +87,17 @@ func NewAppliances() *Appliances {
 				UI.Message("there is not exists any appliances")
 				return event
 			}
-			ctx := AppliancePowerOnOff{
+			data := AppliancePowerOnOff{
 				Power: natureremo.ButtonPowerOff,
 				Row:   row,
+			}
+
+			ctx := Context{
+				Event: Event{
+					Type:  "Appliance",
+					Value: "Power Off",
+				},
+				Data: data,
 			}
 			Dispatcher.Dispatch(ActionAppliancesPower, ctx)
 		case 'o':
@@ -90,7 +105,14 @@ func NewAppliances() *Appliances {
 				UI.Message("there is not exists any appliances")
 				return event
 			}
-			Dispatcher.Dispatch(ActionOpenUpdateApplianceView, row)
+			ctx := Context{
+				Event: Event{
+					Type:  "Operation",
+					Value: "open setting",
+				},
+				Data: row,
+			}
+			Dispatcher.Dispatch(ActionOpenUpdateApplianceView, ctx)
 		}
 		return event
 	})
@@ -110,7 +132,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 		UI.Message("there is not any aircon settings")
 		return
 	}
-	dispatcher := make(chan map[int]UpdateAirConFormData)
+	dispatcher := make(chan Context)
 
 	addTemp := func() {
 		form.AddDropDown("Temperature", viewData.Temp.Values, viewData.Temp.Current,
@@ -119,8 +141,14 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 					return
 				}
 				viewData.Temp.Current = idx
-				updateData := map[int]UpdateAirConFormData{row: viewData}
-				dispatcher <- updateData
+				ctx := Context{
+					Event: Event{
+						Type:  "AC Temperature",
+						Value: viewData.Temp.Value(),
+					},
+					Data: map[int]UpdateAirConFormData{row: viewData},
+				}
+				dispatcher <- ctx
 			})
 	}
 
@@ -131,8 +159,14 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 					return
 				}
 				viewData.Volume.Current = idx
-				updateData := map[int]UpdateAirConFormData{row: viewData}
-				dispatcher <- updateData
+				ctx := Context{
+					Event: Event{
+						Type:  "AC Volume",
+						Value: viewData.Volume.Value(),
+					},
+					Data: map[int]UpdateAirConFormData{row: viewData},
+				}
+				dispatcher <- ctx
 			})
 	}
 
@@ -165,8 +199,14 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 				return
 			}
 			viewData.Power.Current = idx
-			updateData := map[int]UpdateAirConFormData{row: viewData}
-			dispatcher <- updateData
+			ctx := Context{
+				Event: Event{
+					Type:  "AC Power",
+					Value: viewData.Power.Value(),
+				},
+				Data: map[int]UpdateAirConFormData{row: viewData},
+			}
+			dispatcher <- ctx
 		})
 
 	form.AddDropDown("Modes", viewData.Mode.Values, viewData.Mode.Current,
@@ -175,8 +215,14 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 				return
 			}
 			viewData.Mode.Current = idx
-			updateData := map[int]UpdateAirConFormData{row: viewData}
-			dispatcher <- updateData
+			ctx := Context{
+				Event: Event{
+					Type:  "AC Mode",
+					Value: viewData.Mode.Value(),
+				},
+				Data: map[int]UpdateAirConFormData{row: viewData},
+			}
+			dispatcher <- ctx
 			toggleItems()
 		})
 
@@ -188,8 +234,14 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 				return
 			}
 			viewData.Direction.Current = idx
-			updateData := map[int]UpdateAirConFormData{row: viewData}
-			dispatcher <- updateData
+			ctx := Context{
+				Event: Event{
+					Type:  "AC Direction",
+					Value: viewData.Direction.Value(),
+				},
+				Data: map[int]UpdateAirConFormData{row: viewData},
+			}
+			dispatcher <- ctx
 		})
 	// update appliance with view data
 	go func() {
@@ -303,7 +355,14 @@ func (a *Appliances) OpenUpdateLightView(app *natureremo.Appliance) {
 			} else {
 				setting.Value = selected[2]
 			}
-			Dispatcher.Dispatch(ActionUpdateLight, setting)
+			ctx := Context{
+				Event: Event{
+					Type:  "AC Light",
+					Value: selected[1],
+				},
+				Data: setting,
+			}
+			Dispatcher.Dispatch(ActionUpdateLight, ctx)
 		}
 
 		switch event.Rune() {
@@ -371,7 +430,14 @@ func (a *Appliances) OpenUpdateTVView(app *natureremo.Appliance) {
 				ID:     app.ID,
 				Button: selected[1],
 			}
-			Dispatcher.Dispatch(ActionSendTVButton, setting)
+			ctx := Context{
+				Event: Event{
+					Type:  "TV Button",
+					Value: setting.Button,
+				},
+				Data: setting,
+			}
+			Dispatcher.Dispatch(ActionSendTVButton, ctx)
 		}
 
 		switch event.Rune() {
@@ -431,7 +497,14 @@ func (a *Appliances) OpenUpdateIRView(app *natureremo.Appliance) {
 			}
 			selected := list[row]
 			signal := selected[1]
-			Dispatcher.Dispatch(ActionSendSignal, signal)
+			ctx := Context{
+				Event: Event{
+					Type:  "IR Signal",
+					Value: selected[0],
+				},
+				Data: signal,
+			}
+			Dispatcher.Dispatch(ActionSendSignal, ctx)
 		}
 
 		switch event.Rune() {

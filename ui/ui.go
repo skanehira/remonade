@@ -151,13 +151,26 @@ func Start() {
 
 	UI.app.SetFocus(apps)
 
-	Dispatcher.Dispatch(ActionGetAppliances, nil)
-	Dispatcher.Dispatch(ActionGetDevices, nil)
+	ctx := Context{
+		Event: Event{
+			Type:  "API",
+			Value: "get appliances",
+		},
+	}
+	Dispatcher.Dispatch(ActionGetAppliances, ctx)
+
+	ctx = Context{
+		Event: Event{
+			Type:  "API",
+			Value: "get devices",
+		},
+	}
+	Dispatcher.Dispatch(ActionGetDevices, ctx)
 
 	go func() {
 		t := time.NewTicker(INTERVAL * time.Hour)
 		for range t.C {
-			Dispatcher.Dispatch(ActionGetDevices, nil)
+			Dispatcher.Dispatch(ActionGetDevices, ctx)
 		}
 	}()
 

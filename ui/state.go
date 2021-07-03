@@ -39,3 +39,12 @@ func (s *State) UpdateAppliances() {
 func (s *State) UpdateEvents() {
 	UI.events.UpdateView(s.Events)
 }
+
+func (s *State) PushEvent(eventType, value string) {
+	event := Event{
+		Type:    eventType,
+		Value:   value,
+		Created: time.Now().Local(),
+	}
+	s.Events = append(s.Events, event)
+}

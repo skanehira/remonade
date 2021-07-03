@@ -10,7 +10,6 @@ import (
 )
 
 type (
-	// process action, must return new state
 	Action func(state *State, cli *natureremo.Client, ctx interface{}) error
 )
 

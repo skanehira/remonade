@@ -16,6 +16,11 @@ var Dispatcher = &dispatcher{
 	state: &State{},
 }
 
+type Context struct {
+	Event Event
+	Data  interface{}
+}
+
 func copyState(state *State) *State {
 	// NOTE "github.com/jinzhu/copier" doesn't copy time.Time, using json instead
 	// https://github.com/jinzhu/copier/pull/103
@@ -33,10 +38,10 @@ func copyState(state *State) *State {
 	return newState
 }
 
-func (d *dispatcher) Dispatch(action Action, ctx interface{}) {
-	log.Printf("state: %#+v, ctx: %#+v", d.state, ctx)
+func (d *dispatcher) Dispatch(action Action, ctx Context) {
 	old := copyState(d.state)
-	err := action(d.state, Client, ctx)
+	d.state.PushEvent(ctx.Event.Type, ctx.Event.Value)
+	err := action(d.state, Client, ctx.Data)
 	if err != nil {
 		UI.Message(err.Error())
 		return
