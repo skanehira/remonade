@@ -7,6 +7,7 @@
 
 # <img src="https://i.gyazo.com/85e13d8198dcb843ece467cad46350e7.png" width="30"/> remonade - Unofficial Nature Remo CLI
 **UNDER DEVELOPMENT**
+
 ![](https://i.gyazo.com/e1e0e0e34c51b1bf1894bbd26a3f442b.png)
 
 ## Installation
@@ -32,23 +33,27 @@ $ remonade
 
 ### Key maps
 
-| Panel           | Key                | Description            |
-|-----------------|--------------------|------------------------|
-| Common          | `j`                | Move down              |
-| Common          | `k`                | Move up                |
-| Common          | `h`                | Move left              |
-| Common          | `l`                | Move right             |
-| Common          | `Ctrl+n`           | Next panel             |
-| Common          | `Ctrl+p`           | Previous panel         |
-| Appliances      | `u`                | Power on               |
-| Appliances      | `d`                | Power off              |
-| Appliances      | `o`                | Open settings          |
-| AirCon Settings | `q`, `c`           | Close                  |
-| AirCon Settings | `Ctrl+n`, `Ctrl+j` | Next item              |
-| AirCon Settings | `Ctrl+p`, `Ctrl+k` | Previous item          |
-| AirCon Settings | `Enter`, `j`, `k`  | Change value           |
-| Light Settings  | `Enter`            | Apply button or signal |
-
+| Panel           | Key                | Description           |
+|-----------------|--------------------|-----------------------|
+| Common          | `j`                | Move down             |
+| Common          | `k`                | Move up               |
+| Common          | `h`                | Move left             |
+| Common          | `l`                | Move right            |
+| Common          | `Ctrl+n`           | Next panel            |
+| Common          | `Ctrl+p`           | Previous panel        |
+| Appliances      | `u`                | Power on              |
+| Appliances      | `d`                | Power off             |
+| Appliances      | `o`                | Open settings         |
+| AirCon Settings | `q`, `c`           | Close panel           |
+| AirCon Settings | `Ctrl+n`, `Ctrl+j` | Next item             |
+| AirCon Settings | `Ctrl+p`, `Ctrl+k` | Previous item         |
+| AirCon Settings | `Enter`, `j`, `k`  | Change value          |
+| Light Settings  | `Enter`            | Send button or signal |
+| Light Settings  | `q`, `c`           | Close panel           |
+| TV Buttons      | `Enter`            | Send button           |
+| TV Buttons      | `q`, `c`           | Close panel           |
+| IR Signals      | `Enter`            | Send signal           |
+| IR Signals      | `q`, `c`           | Close panel           |
 
 ## Author
 skanehira
