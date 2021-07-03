@@ -77,6 +77,9 @@ func ActionAppliancesPower(state *State, cli *natureremo.Client, ctx interface{}
 	case natureremo.ApplianceTypeTV:
 		btn := "power"
 		_, err = cli.ApplianceService.SendTVSignal(context.Background(), app, btn)
+	case natureremo.ApplianceTypeIR:
+		// DO NOTHING
+		return nil
 	default:
 		return fmt.Errorf("unsupported appliance: %v", app.Type)
 	}
