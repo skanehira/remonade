@@ -44,7 +44,7 @@ func (ui *ui) Message(msg string) {
 			ui.pages.RemovePage("message").ShowPage("main")
 			ui.app.SetFocus(oldFocus)
 		})
-	UI.app.QueueUpdateDraw(func() {
+	go UI.app.QueueUpdateDraw(func() {
 		ui.pages.AddPage("message", ui.Modal(modal, 80, 29), true, true).SendToFront("message")
 	})
 }
@@ -64,7 +64,7 @@ func (ui *ui) Confirm(msg, doLabel string, doFunc func() error) {
 				}
 			}
 		})
-	UI.app.QueueUpdateDraw(func() {
+	go UI.app.QueueUpdateDraw(func() {
 		ui.pages.AddPage("modal", ui.Modal(modal, 80, 29), true, true).SendToFront("modal")
 	})
 }
