@@ -323,12 +323,22 @@ func makeApplianceRow(app *natureremo.Appliance) []string {
 		row = []string{"-"}
 	}
 
+	name := "-"
+	manufacturer := "-"
+	country := "-"
+
+	if app.Model != nil {
+		name = app.Model.Name
+		manufacturer = app.Model.Manufacturer
+		country = app.Model.Country
+	}
+
 	row = append(row, []string{
 		app.Nickname,
 		string(app.Type),
-		app.Model.Name,
-		app.Model.Manufacturer,
-		app.Model.Country,
+		name,
+		manufacturer,
+		country,
 	}...)
 	return row
 }

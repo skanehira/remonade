@@ -435,8 +435,8 @@
       "settings": {
         "temp": "25",
         "temp_unit": "c",
-        "mode": "dry",
-        "vol": "",
+        "mode": "bool",
+        "vol": "1",
         "dir": "auto",
         "dirh": "",
         "button": "",
@@ -567,6 +567,50 @@
         "tempUnit": "c"
       },
       "signals": []
+    },
+    {
+      "id": "19c8ed2b-aac2-4fa4-9be3-311ecf5ced77",
+      "device": {
+        "name": "Remo mini",
+        "id": "6bea336b-8010-4d25-8da6-9e6c0f823e11",
+        "created_at": "2021-06-25T11:47:08Z",
+        "updated_at": "2021-07-01T01:44:33Z",
+        "mac_address": "a1:e2:3c:40:51:68",
+        "bt_mac_address": "11:22:33:44:55:66",
+        "serial_number": "1W111111111111",
+        "firmware_version": "Remo-mini/1.4.17",
+        "temperature_offset": 0,
+        "humidity_offset": 0
+      },
+      "model": null,
+      "type": "IR",
+      "nickname": "炊飯器",
+      "image": "ico_light",
+      "settings": null,
+      "aircon": null,
+      "signals": [
+        {
+          "id": "e339b1da-0500-4cc8-8e70-0bf9d4f7e662",
+          "name": "早炊き",
+          "image": "ico_lightup"
+        },
+        {
+          "id": "028b8a8a-e730-4d99-8c7c-a86a4f270617",
+          "name": "炊飯",
+          "image": "ico_lightup"
+        },
+        {
+          "id": "70b9acac-9859-4265-bb75-272e444cc1e3",
+          "name": "保温",
+          "image": "ico_lightdown"
+        },
+        {
+          "id": "c826c22a-da4f-472d-9dfc-119d3edca93e",
+          "name": "終了",
+          "image": "ico_lightdown"
+        }
+      ],
+      "light": null
     }
   ]
 }
