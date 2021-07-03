@@ -9,11 +9,16 @@
 
 ![](https://i.gyazo.com/e1e0e0e34c51b1bf1894bbd26a3f442b.png)
 
-## Installation
+## Requirements
+- Go 1.16 ~
 
-```sh
-$ go install github.com/skanehira/remonade@latest
-```
+## Installation
+- From source code
+  ```sh
+  $ go install github.com/skanehira/remonade@latest
+  ```
+- From Releases
+  Download from [Releases](https://github.com/skanehira/remonade/releases)
 
 ## Usage
 At first, you must generate token from [home.nature.global](https://home.nature.global).
