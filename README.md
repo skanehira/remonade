@@ -26,10 +26,10 @@ And then, you can setup token to configuration file with run `remonade init`.
 
 ```sh
 # setup your token
-$ remonade init
+$ remonade config init
 
 # edit your config
-$ remonade edit
+$ remonade config edit
 
 # run
 $ remonade
