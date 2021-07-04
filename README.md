@@ -22,16 +22,16 @@
 
 ## Usage
 At first, you must generate token from [home.nature.global](https://home.nature.global).
-And then, you can setup token to configuration file with run `remonade init`.
+And then, you can setup token to configuration file with run `remonade config init`.
 
 ```sh
-# setup your token
+# Setup your token
 $ remonade config init
 
-# edit your config
+# Edit your config using $EDITOR
 $ remonade config edit
 
-# run
+# Run
 $ remonade
 ```
 
