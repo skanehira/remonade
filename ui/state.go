@@ -29,15 +29,15 @@ func (s *State) String() string {
 }
 
 func (s *State) UpdateDevices() {
-	UI.devices.UpdateView(s.Devices)
+	UI.Devices.UpdateView(s.Devices)
 }
 
 func (s *State) UpdateAppliances() {
-	UI.appliances.UpdateView(s.Appliances)
+	UI.Appliances.UpdateView(s.Appliances)
 }
 
 func (s *State) UpdateEvents() {
-	UI.events.UpdateView(s.Events)
+	UI.Events.UpdateView(s.Events)
 }
 
 func (s *State) PushEvent(eventType, value string) {

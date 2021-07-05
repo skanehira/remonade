@@ -19,13 +19,13 @@ var (
 )
 
 type ui struct {
-	app        *tview.Application
-	pages      *tview.Pages
-	primitives []tview.Primitive
+	App        *tview.Application
+	Pages      *tview.Pages
+	Primitives []tview.Primitive
 
-	events     *Events
-	appliances *Appliances
-	devices    *Devices
+	Events     *Events
+	Appliances *Appliances
+	Devices    *Devices
 }
 
 func (ui *ui) Modal(p tview.Primitive, width, height int) tview.Primitive {
@@ -36,63 +36,63 @@ func (ui *ui) Modal(p tview.Primitive, width, height int) tview.Primitive {
 }
 
 func (ui *ui) Message(msg string) {
-	oldFocus := ui.app.GetFocus()
+	oldFocus := ui.App.GetFocus()
 	modal := tview.NewModal().
 		SetText(msg).
 		AddButtons([]string{"OK"}).
 		SetDoneFunc(func(_ int, _ string) {
-			ui.pages.RemovePage("message").ShowPage("main")
-			ui.app.SetFocus(oldFocus)
+			ui.Pages.RemovePage("message").ShowPage("main")
+			ui.App.SetFocus(oldFocus)
 		})
-	go UI.app.QueueUpdateDraw(func() {
-		ui.pages.AddPage("message", ui.Modal(modal, 80, 29), true, true).SendToFront("message")
+	go UI.App.QueueUpdateDraw(func() {
+		ui.Pages.AddPage("message", ui.Modal(modal, 80, 29), true, true).SendToFront("message")
 	})
 }
 
 func (ui *ui) Confirm(msg, doLabel string, doFunc func() error) {
-	oldFocus := ui.app.GetFocus()
+	oldFocus := ui.App.GetFocus()
 	modal := tview.NewModal().
 		SetText(msg).
 		AddButtons([]string{doLabel, "Cancel"}).
 		SetDoneFunc(func(_ int, buttonLabel string) {
-			ui.pages.RemovePage("modal").ShowPage("main")
-			ui.app.SetFocus(oldFocus)
+			ui.Pages.RemovePage("modal").ShowPage("main")
+			ui.App.SetFocus(oldFocus)
 			if buttonLabel == doLabel {
 				if err := doFunc(); err != nil {
 					ui.Message(err.Error())
-					ui.app.SetFocus(oldFocus)
+					ui.App.SetFocus(oldFocus)
 				}
 			}
 		})
-	go UI.app.QueueUpdateDraw(func() {
-		ui.pages.AddPage("modal", ui.Modal(modal, 80, 29), true, true).SendToFront("modal")
+	go UI.App.QueueUpdateDraw(func() {
+		ui.Pages.AddPage("modal", ui.Modal(modal, 80, 29), true, true).SendToFront("modal")
 	})
 }
 
 func (ui *ui) next() {
-	c := ui.app.GetFocus()
+	c := ui.App.GetFocus()
 
-	for i, p := range ui.primitives {
+	for i, p := range ui.Primitives {
 		if c == p {
-			idx := (i + 1) % len(ui.primitives)
-			ui.app.SetFocus(ui.primitives[idx])
+			idx := (i + 1) % len(ui.Primitives)
+			ui.App.SetFocus(ui.Primitives[idx])
 			break
 		}
 	}
 }
 
 func (ui *ui) prev() {
-	c := ui.app.GetFocus()
+	c := ui.App.GetFocus()
 
-	for i, p := range ui.primitives {
+	for i, p := range ui.Primitives {
 		if c == p {
 			var idx int
 			if i == 0 {
-				idx = len(ui.primitives) - 1
+				idx = len(ui.Primitives) - 1
 			} else {
-				idx = (i - 1) % len(ui.primitives)
+				idx = (i - 1) % len(ui.Primitives)
 			}
-			ui.app.SetFocus(ui.primitives[idx])
+			ui.App.SetFocus(ui.Primitives[idx])
 			break
 		}
 	}
@@ -107,7 +107,7 @@ func Start() {
 	}
 
 	UI = &ui{
-		app: tview.NewApplication(),
+		App: tview.NewApplication(),
 	}
 
 	// for readability
@@ -118,15 +118,15 @@ func Start() {
 	devices := NewDevices()
 	apps := NewAppliances()
 
-	UI.primitives = []tview.Primitive{
+	UI.Primitives = []tview.Primitive{
 		devices,
 		apps,
 		events,
 	}
 
-	UI.events = events
-	UI.devices = devices
-	UI.appliances = apps
+	UI.Events = events
+	UI.Devices = devices
+	UI.Appliances = apps
 
 	// nolint gomnd
 	grid := tview.NewGrid().SetRows(1, 0, 0).SetColumns(0, 0, 0).
@@ -135,11 +135,11 @@ func Start() {
 		AddItem(apps, row+2, col, rowSpan+1, colSpan+2, 0, 0, true).
 		AddItem(events, row+1, col+2, rowSpan+2, colSpan+1, 0, 0, true)
 
-	UI.pages = tview.NewPages().
+	UI.Pages = tview.NewPages().
 		AddAndSwitchToPage("main", grid, true)
 
-	UI.app.SetRoot(UI.pages, true)
-	UI.app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+	UI.App.SetRoot(UI.Pages, true)
+	UI.App.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlN:
 			UI.next()
@@ -149,7 +149,7 @@ func Start() {
 		return event
 	})
 
-	UI.app.SetFocus(apps)
+	UI.App.SetFocus(apps)
 
 	ctx := Context{
 		Event: Event{
@@ -174,8 +174,8 @@ func Start() {
 		}
 	}()
 
-	if err := UI.app.Run(); err != nil {
-		UI.app.Stop()
+	if err := UI.App.Run(); err != nil {
+		UI.App.Stop()
 		util.ExitError(err)
 	}
 }

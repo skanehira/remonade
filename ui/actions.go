@@ -94,13 +94,13 @@ func ActionOpenUpdateApplianceView(state *State, cli *natureremo.Client, ctx int
 
 	switch app.Type {
 	case natureremo.ApplianceTypeAirCon:
-		UI.appliances.OpenUpdateAirConView(app)
+		UI.Appliances.OpenUpdateAirConView(app)
 	case natureremo.ApplianceTypeLight:
-		UI.appliances.OpenUpdateLightView(app)
+		UI.Appliances.OpenUpdateLightView(app)
 	case natureremo.ApplianceTypeTV:
-		UI.appliances.OpenUpdateTVView(app)
+		UI.Appliances.OpenUpdateTVView(app)
 	case natureremo.ApplianceTypeIR:
-		UI.appliances.OpenUpdateIRView(app)
+		UI.Appliances.OpenUpdateIRView(app)
 	default:
 		return fmt.Errorf("unsupported appliance type: %s", app.Type)
 	}

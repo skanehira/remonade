@@ -47,7 +47,7 @@ func (d *dispatcher) Dispatch(action Action, ctx Context) {
 		return
 	}
 
-	go UI.app.QueueUpdateDraw(func() {
+	go UI.App.QueueUpdateDraw(func() {
 		if !cmp.Equal(old.Appliances, d.state.Appliances) {
 			log.Println("update appliance view")
 			d.state.UpdateAppliances()

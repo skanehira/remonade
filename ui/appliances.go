@@ -253,8 +253,8 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 
 	close := func() {
 		close(dispatcher)
-		UI.pages.RemovePage("form").ShowPage("main")
-		UI.app.SetFocus(a)
+		UI.Pages.RemovePage("form").ShowPage("main")
+		UI.App.SetFocus(a)
 	}
 
 	form.AddButton("Close", func() {
@@ -265,26 +265,26 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 		switch event.Key() {
 		case tcell.KeyCtrlN, tcell.KeyCtrlJ:
 			k := tcell.NewEventKey(tcell.KeyTab, 0, tcell.ModNone)
-			UI.app.QueueEvent(k)
+			UI.App.QueueEvent(k)
 		case tcell.KeyCtrlP, tcell.KeyCtrlK:
 			k := tcell.NewEventKey(tcell.KeyBacktab, 0, tcell.ModNone)
-			UI.app.QueueEvent(k)
+			UI.App.QueueEvent(k)
 		}
 
 		switch event.Rune() {
 		case 'j':
 			k := tcell.NewEventKey(tcell.KeyTab, 0, tcell.ModNone)
-			UI.app.QueueEvent(k)
+			UI.App.QueueEvent(k)
 		case 'k':
 			k := tcell.NewEventKey(tcell.KeyBacktab, 0, tcell.ModNone)
-			UI.app.QueueEvent(k)
+			UI.App.QueueEvent(k)
 		case 'q', 'c':
 			close()
 		}
 		return event
 	})
 
-	UI.pages.AddPage("form", UI.Modal(form, 50, 15), true, true).SendToFront("form")
+	UI.Pages.AddPage("form", UI.Modal(form, 50, 15), true, true).SendToFront("form")
 }
 
 type LightSetting struct {
@@ -367,13 +367,13 @@ func (a *Appliances) OpenUpdateLightView(app *natureremo.Appliance) {
 
 		switch event.Rune() {
 		case 'c', 'q':
-			UI.pages.RemovePage("light").ShowPage("main")
-			UI.app.SetFocus(a)
+			UI.Pages.RemovePage("light").ShowPage("main")
+			UI.App.SetFocus(a)
 		}
 		return event
 	})
 
-	UI.pages.AddPage("light", UI.Modal(table, 60, 15), true, true).SendToFront("light")
+	UI.Pages.AddPage("light", UI.Modal(table, 60, 15), true, true).SendToFront("light")
 }
 
 type TVSetting struct {
@@ -442,13 +442,13 @@ func (a *Appliances) OpenUpdateTVView(app *natureremo.Appliance) {
 
 		switch event.Rune() {
 		case 'c', 'q':
-			UI.pages.RemovePage(pageName).ShowPage("main")
-			UI.app.SetFocus(a)
+			UI.Pages.RemovePage(pageName).ShowPage("main")
+			UI.App.SetFocus(a)
 		}
 		return event
 	})
 
-	UI.pages.AddPage(pageName, UI.Modal(table, 60, 15), true, true).SendToFront(pageName)
+	UI.Pages.AddPage(pageName, UI.Modal(table, 60, 15), true, true).SendToFront(pageName)
 }
 
 func (a *Appliances) OpenUpdateIRView(app *natureremo.Appliance) {
@@ -509,13 +509,13 @@ func (a *Appliances) OpenUpdateIRView(app *natureremo.Appliance) {
 
 		switch event.Rune() {
 		case 'c', 'q':
-			UI.pages.RemovePage(pageName).ShowPage("main")
-			UI.app.SetFocus(a)
+			UI.Pages.RemovePage(pageName).ShowPage("main")
+			UI.App.SetFocus(a)
 		}
 		return event
 	})
 
-	UI.pages.AddPage(pageName, UI.Modal(table, 60, 15), true, true).SendToFront(pageName)
+	UI.Pages.AddPage(pageName, UI.Modal(table, 60, 15), true, true).SendToFront(pageName)
 }
 
 func makeApplianceRow(app *natureremo.Appliance) []string {
