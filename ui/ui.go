@@ -69,9 +69,8 @@ func (ui *ui) Confirm(msg, doLabel string, doFunc func() error) {
 	})
 }
 
-func (ui *ui) next() {
+func (ui *ui) NextPane() {
 	c := ui.App.GetFocus()
-
 	for i, p := range ui.Primitives {
 		if c == p {
 			idx := (i + 1) % len(ui.Primitives)
@@ -81,7 +80,7 @@ func (ui *ui) next() {
 	}
 }
 
-func (ui *ui) prev() {
+func (ui *ui) PrevPane() {
 	c := ui.App.GetFocus()
 
 	for i, p := range ui.Primitives {
@@ -142,9 +141,9 @@ func Start() {
 	UI.App.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyCtrlN:
-			UI.next()
+			UI.NextPane()
 		case tcell.KeyCtrlP:
-			UI.prev()
+			UI.PrevPane()
 		}
 		return event
 	})
