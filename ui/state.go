@@ -42,9 +42,21 @@ func (s *State) UpdateEvents() {
 
 func (s *State) PushEvent(eventType, value string) {
 	event := Event{
-		Type:    eventType,
+		Type:    parseEventType(eventType),
 		Value:   value,
 		Created: time.Now().Local(),
 	}
 	s.Events = append(s.Events, event)
+}
+
+func parseEventType(ev string) string {
+	switch ev {
+	case "te":
+		return "temperature"
+	case "hu":
+		return "humidity"
+	case "il":
+		return "illumination"
+	}
+	return ev
 }

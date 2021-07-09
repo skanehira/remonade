@@ -31,7 +31,7 @@ func ActionGetDevices(state *State, cli *natureremo.Client, ctx interface{}) err
 	for _, dev := range devices {
 		for t, e := range dev.NewestEvents {
 			state.Events = append(state.Events, Event{
-				Type:    string(t),
+				Type:    parseEventType(string(t)),
 				Value:   fmt.Sprintf("%v", e.Value),
 				Created: e.CreatedAt,
 			})
