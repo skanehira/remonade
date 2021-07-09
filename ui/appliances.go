@@ -62,6 +62,13 @@ func NewAppliances() *Appliances {
 		"Country",
 	}
 
+	a.SetSelectionChangedFunc(func(row, col int) {
+		ctx := Context{
+			Data: row - 1,
+		}
+		Dispatcher.Dispatch(ActionUpdateSelectIdx, ctx)
+	})
+
 	a.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		row := a.GetSelect()
 		switch event.Rune() {
@@ -146,7 +153,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 						Type:  "AC Temperature",
 						Value: viewData.Temp.Value(),
 					},
-					Data: map[int]UpdateAirConFormData{row: viewData},
+					Data: viewData,
 				}
 				dispatcher <- ctx
 			})
@@ -164,7 +171,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 						Type:  "AC Volume",
 						Value: viewData.Volume.Value(),
 					},
-					Data: map[int]UpdateAirConFormData{row: viewData},
+					Data: viewData,
 				}
 				dispatcher <- ctx
 			})
@@ -204,7 +211,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 					Type:  "AC Power",
 					Value: viewData.Power.Value(),
 				},
-				Data: map[int]UpdateAirConFormData{row: viewData},
+				Data: viewData,
 			}
 			dispatcher <- ctx
 		})
@@ -220,7 +227,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 					Type:  "AC Mode",
 					Value: viewData.Mode.Value(),
 				},
-				Data: map[int]UpdateAirConFormData{row: viewData},
+				Data: viewData,
 			}
 			dispatcher <- ctx
 			toggleItems()
@@ -239,7 +246,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 					Type:  "AC Direction",
 					Value: viewData.Direction.Value(),
 				},
-				Data: map[int]UpdateAirConFormData{row: viewData},
+				Data: viewData,
 			}
 			dispatcher <- ctx
 		})

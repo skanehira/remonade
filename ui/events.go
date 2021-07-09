@@ -20,6 +20,7 @@ func NewEvents() *Events {
 	e.Clear().SetBorderColor(tcell.ColorGreen)
 
 	e.header = []string{
+		"Device",
 		"Type",
 		"Value",
 		"Created",
@@ -45,6 +46,7 @@ func (e *Events) UpdateView(events []Event) {
 	rows := make([][]string, len(events))
 	for i, e := range events {
 		rows[i] = []string{
+			e.Device,
 			e.Type,
 			e.Value,
 			e.Created.Local().Format(dateFormat),

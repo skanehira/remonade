@@ -40,7 +40,16 @@ func copyState(state *State) *State {
 
 func (d *dispatcher) Dispatch(action Action, ctx Context) {
 	old := copyState(d.state)
-	d.state.PushEvent(ctx.Event.Type, ctx.Event.Value)
+	if ctx.Event.Type != "" {
+		app, err := d.state.SelectAppliance()
+		if err != nil {
+			ctx.Event.Device = "-"
+		} else {
+			ctx.Event.Device = app.Device.Name
+		}
+		ctx.Event.Type = parseEventType(ctx.Event.Type)
+		d.state.PushEvent(ctx.Event)
+	}
 	err := action(d.state, Client, ctx.Data)
 	if err != nil {
 		UI.Message(err.Error())

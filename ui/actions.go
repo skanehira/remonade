@@ -30,11 +30,13 @@ func ActionGetDevices(state *State, cli *natureremo.Client, ctx interface{}) err
 	state.Devices = devices
 	for _, dev := range devices {
 		for t, e := range dev.NewestEvents {
-			state.Events = append(state.Events, Event{
+			ev := Event{
+				Device:  dev.Name,
 				Type:    parseEventType(string(t)),
 				Value:   fmt.Sprintf("%v", e.Value),
 				Created: e.CreatedAt,
-			})
+			}
+			state.PushEvent(ev)
 		}
 	}
 	return nil
@@ -109,21 +111,15 @@ func ActionOpenUpdateApplianceView(state *State, cli *natureremo.Client, ctx int
 }
 
 func ActionUpdateAirConSettings(state *State, cli *natureremo.Client, ctx interface{}) error {
-	data, ok := ctx.(map[int]UpdateAirConFormData)
+	form, ok := ctx.(UpdateAirConFormData)
 	if !ok {
 		return fmt.Errorf(`ctx is invalid type: %T`, ctx)
 	}
 
-	var (
-		idx  int
-		form UpdateAirConFormData
-	)
-
-	for idx, form = range data {
-		break
+	oldapp, err := state.SelectAppliance()
+	if err != nil {
+		return err
 	}
-
-	oldapp := state.Appliances[idx]
 
 	app := &natureremo.Appliance{ID: oldapp.ID}
 	settings := &natureremo.AirConSettings{}
@@ -151,9 +147,10 @@ func ActionUpdateAirConSettings(state *State, cli *natureremo.Client, ctx interf
 		return err
 	}
 
-	err := copier.CopyWithOption(oldapp.AirConSettings, settings,
+	err = copier.CopyWithOption(oldapp.AirConSettings, settings,
 		copier.Option{IgnoreEmpty: true, DeepCopy: true})
 	if err != nil {
+		log.Printf("destination: %#+v, source: %#+v", oldapp.AirConSettings, settings)
 		return err
 	}
 	// NOTE copier option is ignore empty, but when power is on, the value is empty
@@ -220,6 +217,17 @@ func ActionSendSignal(state *State, cli *natureremo.Client, ctx interface{}) err
 	if err := cli.SignalService.Send(context.Background(), signal); err != nil {
 		return err
 	}
+	return nil
+}
+
+func ActionUpdateSelectIdx(state *State, cli *natureremo.Client, ctx interface{}) error {
+	idx, ok := ctx.(int)
+	if !ok {
+		log.Printf(`ctx is not "int": %T\n`, ctx)
+		return nil
+	}
+
+	state.SelectApplianceIdx = idx
 	return nil
 }
 

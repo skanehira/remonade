@@ -3,21 +3,29 @@ package ui
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
+	"log"
 	"time"
 
 	"github.com/tenntenn/natureremo"
 )
 
+var (
+	IndexOutOfAppliances = errors.New("index out of appliances")
+)
+
 type Event struct {
+	Device  string
 	Type    string
 	Value   string
 	Created time.Time
 }
 
 type State struct {
-	Devices    []*natureremo.Device
-	Appliances []*natureremo.Appliance
-	Events     []Event
+	SelectApplianceIdx int
+	Devices            []*natureremo.Device
+	Appliances         []*natureremo.Appliance
+	Events             []Event
 }
 
 func (s *State) String() string {
@@ -40,13 +48,17 @@ func (s *State) UpdateEvents() {
 	UI.Events.UpdateView(s.Events)
 }
 
-func (s *State) PushEvent(eventType, value string) {
-	event := Event{
-		Type:    parseEventType(eventType),
-		Value:   value,
-		Created: time.Now().Local(),
+func (s *State) PushEvent(ev Event) {
+	ev.Created = time.Now().Local()
+	s.Events = append(s.Events, ev)
+}
+
+func (s *State) SelectAppliance() (*natureremo.Appliance, error) {
+	if s.SelectApplianceIdx >= len(s.Appliances) {
+		log.Println("select idx is greater than state.Appliances's length")
+		return nil, IndexOutOfAppliances
 	}
-	s.Events = append(s.Events, event)
+	return s.Appliances[s.SelectApplianceIdx], nil
 }
 
 func parseEventType(ev string) string {
