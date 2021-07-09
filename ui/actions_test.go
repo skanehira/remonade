@@ -304,10 +304,8 @@ func TestActionUpdateAirConSettings(t *testing.T) {
 		server := NewMockServer(t, h)
 		cli := NewMockClient(t, server.URL)
 
-		ctx := map[int]UpdateAirConFormData{
-			0: tt.ctx,
-		}
-		if err := ActionUpdateAirConSettings(tt.state, cli, ctx); err != nil {
+		tt.state.SelectApplianceIdx = 0
+		if err := ActionUpdateAirConSettings(tt.state, cli, tt.ctx); err != nil {
 			_ = server.Config.Shutdown(context.Background())
 			t.Fatal(err)
 		}
