@@ -54,6 +54,7 @@ func NewAppliances() *Appliances {
 	a.SetBorderColor(tcell.ColorYellow)
 
 	a.header = []string{
+		"Device",
 		"State",
 		"NickName",
 		"Type",
@@ -526,25 +527,27 @@ func (a *Appliances) OpenUpdateIRView(app *natureremo.Appliance) {
 }
 
 func makeApplianceRow(app *natureremo.Appliance) []string {
-	var row []string
+	row := []string{
+		app.Device.Name,
+	}
 
 	switch app.Type {
 	case natureremo.ApplianceTypeAirCon:
 		if app.AirConSettings.Button == "" {
-			row = []string{"ON"}
+			row = append(row, "ON")
 		} else {
-			row = []string{"OFF"}
+			row = append(row, "OFF")
 		}
 	case natureremo.ApplianceTypeLight:
 		if app.Light.State.Power == "off" {
-			row = []string{"OFF"}
+			row = append(row, "OFF")
 		} else {
-			row = []string{"ON"}
+			row = append(row, "ON")
 		}
 	case natureremo.ApplianceTypeTV:
-		row = []string{string(app.TV.State.Input)}
+		row = append(row, string(app.TV.State.Input))
 	default:
-		row = []string{"-"}
+		row = append(row, "-")
 	}
 
 	name := "-"
