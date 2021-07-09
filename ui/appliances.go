@@ -114,10 +114,6 @@ func NewAppliances() *Appliances {
 				return event
 			}
 			ctx := Context{
-				Event: Event{
-					Type:  "Operation",
-					Value: "open setting",
-				},
 				Data: row,
 			}
 			Dispatcher.Dispatch(ActionOpenUpdateApplianceView, ctx)
