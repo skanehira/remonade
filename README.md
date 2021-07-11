@@ -47,6 +47,7 @@ export TERM=xterm-256color
 
 | Panel           | Key                | Description           |
 |-----------------|--------------------|-----------------------|
+| Common          | `Ctrl+c`           | Exit remonade         |
 | Common          | `j`                | Move down             |
 | Common          | `k`                | Move up               |
 | Common          | `h`                | Move left             |
