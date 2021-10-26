@@ -136,7 +136,7 @@ func ActionUpdateAirConSettings(state *State, cli *natureremo.Client, ctx interf
 	switch mode {
 	case "below":
 		settings.AirVolume = natureremo.AirVolume(form.Volume.Value())
-	case "cool", "swarm":
+	case "cool", "warm":
 		settings.Temperature = form.Temp.Value()
 		settings.AirVolume = natureremo.AirVolume(form.Volume.Value())
 	case "dry":
