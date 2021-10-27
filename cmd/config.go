@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"bufio"
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"github.com/skanehira/remonade/config"
 	"github.com/skanehira/remonade/util"
 	"github.com/spf13/cobra"
+	"github.com/tenntenn/natureremo"
 	"gopkg.in/yaml.v3"
 )
 
@@ -21,21 +23,14 @@ var (
 
 func runInit(path string) error {
 	var (
-		f   *os.File
 		err error
 	)
 
 	if util.NotExist(path) {
-		if err = config.Create(path); err != nil {
+		if err = util.Create(path); err != nil {
 			return err
 		}
 	}
-
-	f, err = os.OpenFile(path, os.O_WRONLY, 0)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
 
 	fmt.Print("Your access token: ")
 	sc := bufio.NewScanner(os.Stdin)
@@ -46,8 +41,53 @@ func runInit(path string) error {
 		return ErrEmptyToken
 	}
 
+	fmt.Println("Initializing...")
+	return updateConfig(path, token)
+}
+
+func updateConfig(path string, tokens ...string) error {
+	f, err := os.OpenFile(path, os.O_RDWR, 0)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	if err := yaml.NewDecoder(f).Decode(&config.Config); err != nil {
+		return fmt.Errorf("failed to decode config: %w", err)
+	}
+
+	var token string
+	// use config's token
+	if len(tokens) == 0 {
+		if config.Config.Token == "" {
+			return ErrEmptyToken
+		}
+		token = config.Config.Token
+	} else {
+		token = tokens[0]
+	}
+
+	cli := natureremo.NewClient(token)
+	apps, err := cli.ApplianceService.GetAll(context.Background())
+	if err != nil {
+		return fmt.Errorf("failed to get appliances: %w", err)
+	}
+
 	config.Config.Token = token
+	config.Config.Apps = apps
+
+	if err := f.Truncate(0); err != nil {
+		return fmt.Errorf("failed to truncate config.yaml: %w", err)
+	}
+	if _, err := f.Seek(0, 0); err != nil {
+		return fmt.Errorf("failed to seek config.yaml: %w", err)
+	}
 	return yaml.NewEncoder(f).Encode(config.Config)
+}
+
+func runUpdate(path string) error {
+	fmt.Println("Updating...")
+	return updateConfig(path)
 }
 
 func runEdit(path string) error {
@@ -73,7 +113,9 @@ func run(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	if args[0] != "edit" && args[0] != "init" {
+	switch args[0] {
+	case "init", "edit", "update":
+	default:
 		_ = cmd.Help()
 		os.Exit(1)
 	}
@@ -89,6 +131,12 @@ func run(cmd *cobra.Command, args []string) {
 			util.ExitError(err)
 		}
 	}
+
+	if args[0] == "update" {
+		if err := runUpdate(config.Path); err != nil {
+			util.ExitError(err)
+		}
+	}
 }
 
 var configCmd = &cobra.Command{
@@ -101,11 +149,12 @@ func init() {
 		fmt.Print(`Config command
 
 Usage:
-  remonade config [edit|init]
+  remonade config [edit|init|update]
 
 Command:
   init                Setup config
   edit                Edit config
+  update              Update config
 
 Flags:
   -h, --help          help for config

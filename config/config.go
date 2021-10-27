@@ -6,11 +6,13 @@ import (
 	"path/filepath"
 
 	"github.com/skanehira/remonade/util"
+	"github.com/tenntenn/natureremo"
 	"gopkg.in/yaml.v3"
 )
 
 type config struct {
-	Token string `yaml:"token"`
+	Token string                  `yaml:"token"`
+	Apps  []*natureremo.Appliance `yaml:"apps"`
 }
 
 var (
@@ -29,7 +31,7 @@ func init() {
 
 func Load() {
 	if util.NotExist(Path) {
-		if err := Create(Path); err != nil {
+		if err := util.Create(Path); err != nil {
 			util.ExitError(fmt.Errorf("cannot create file %s: %w", Path, err))
 		}
 		return
@@ -44,22 +46,4 @@ func Load() {
 	if err := yaml.NewDecoder(f).Decode(&Config); err != nil {
 		util.ExitError(fmt.Errorf("cannot decode %s: %w", Path, err))
 	}
-}
-
-func Create(path string) error {
-	base := filepath.Dir(path)
-
-	if util.NotExist(base) {
-		if err := os.Mkdir(base, os.ModePerm); err != nil {
-			return err
-		}
-	}
-
-	f, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
-	return nil
 }
