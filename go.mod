@@ -6,7 +6,7 @@ require (
 	github.com/gdamore/tcell/v2 v2.4.0
 	github.com/google/go-cmp v0.5.6
 	github.com/jinzhu/copier v0.3.2
-	github.com/mattn/go-runewidth v0.0.13 // indirect
+	github.com/mattn/go-runewidth v0.0.13
 	github.com/rivo/tview v0.0.0-20210312174852-ae9464cc3598
 	github.com/spf13/cobra v1.3.0
 	github.com/tenntenn/natureremo v0.4.0
