@@ -21,6 +21,7 @@ OS: %s
 Arch: %s
 `, Version, Revision, runtime.GOOS, runtime.GOARCH)
 	},
+	Short: "Show version info",
 }
 
 func init() {

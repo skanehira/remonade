@@ -92,8 +92,9 @@ func run(cmd *cobra.Command, args []string) {
 }
 
 var configCmd = &cobra.Command{
-	Use: "config",
-	Run: run,
+	Use:   "config",
+	Run:   run,
+	Short: "Edit or setup config",
 }
 
 func init() {
