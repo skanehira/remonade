@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/skanehira/remonade/config"
 	"github.com/skanehira/remonade/util"
@@ -46,7 +47,7 @@ func runInit(path string) error {
 		return ErrEmptyToken
 	}
 
-	config.Config.Token = token
+	config.Config.Token = strings.Trim(token, "\r\n")
 	return yaml.NewEncoder(f).Encode(config.Config)
 }
 
