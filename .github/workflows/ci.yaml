@@ -12,8 +12,8 @@ jobs:
   golangci:
     strategy:
       matrix:
-        go-version: [1.16.x]
-        os: [windows-latest, macos-latest, ubuntu-latest]
+        go-version: [1.17.x]
+        os: [ubuntu-latest]
     name: golangci-lint
     runs-on: ${{ matrix.os }}
     steps:
@@ -25,7 +25,7 @@ jobs:
   lint:
     strategy:
       matrix:
-        go-version: [1.16.x]
+        go-version: [1.17.x]
         os: [windows-latest, macos-latest, ubuntu-latest]
     name: lint
     runs-on: ${{ matrix.os }}
@@ -49,7 +49,7 @@ jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.16.x]
+        go-version: [1.17.x]
         os: [windows-latest, macos-latest, ubuntu-latest]
     name: test
     runs-on: ${{ matrix.os }}
