@@ -20,6 +20,8 @@ jobs:
       - uses: actions/checkout@v2
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
   lint:
     strategy:
       matrix:
