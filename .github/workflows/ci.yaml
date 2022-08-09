@@ -73,3 +73,4 @@ jobs:
       - name: go test
         run: go test -v ./... -coverprofile=coverage.out
       - uses: k1LoW/octocov-action@v0
+        if: runner.os == 'Linux'
