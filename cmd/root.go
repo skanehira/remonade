@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"io/ioutil"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -17,7 +17,7 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
-	rootCmd.Run = func(cmd *cobra.Command, args []string) {
+	rootCmd.Run = func(_ *cobra.Command, _ []string) {
 		config.Load()
 		debug := os.Getenv("DEBUG")
 		if debug != "" {
@@ -30,7 +30,7 @@ func Execute() {
 			defer f.Close()
 			log.SetOutput(f)
 		} else {
-			log.SetOutput(ioutil.Discard)
+			log.SetOutput(io.Discard)
 		}
 		ui.Start()
 	}

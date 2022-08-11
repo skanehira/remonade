@@ -13,7 +13,7 @@ type (
 	Action func(state *State, cli *natureremo.Client, ctx interface{}) error
 )
 
-func ActionGetAppliances(state *State, cli *natureremo.Client, ctx interface{}) error {
+func ActionGetAppliances(state *State, _ *natureremo.Client, _ interface{}) error {
 	apps, err := Client.ApplianceService.GetAll(context.Background())
 	if err != nil {
 		return err
@@ -22,7 +22,7 @@ func ActionGetAppliances(state *State, cli *natureremo.Client, ctx interface{}) 
 	return nil
 }
 
-func ActionGetDevices(state *State, cli *natureremo.Client, ctx interface{}) error {
+func ActionGetDevices(state *State, _ *natureremo.Client, _ interface{}) error {
 	devices, err := Client.DeviceService.GetAll(context.Background())
 	if err != nil {
 		return err
@@ -88,7 +88,7 @@ func ActionAppliancesPower(state *State, cli *natureremo.Client, ctx interface{}
 	return err
 }
 
-func ActionOpenUpdateApplianceView(state *State, cli *natureremo.Client, ctx interface{}) error {
+func ActionOpenUpdateApplianceView(state *State, _ *natureremo.Client, ctx interface{}) error {
 	app, err := getAppliance(state, ctx)
 	if err != nil {
 		return err
@@ -160,7 +160,7 @@ func ActionUpdateAirConSettings(state *State, cli *natureremo.Client, ctx interf
 	return nil
 }
 
-func ActionUpdateLight(state *State, cli *natureremo.Client, ctx interface{}) error {
+func ActionUpdateLight(_ *State, cli *natureremo.Client, ctx interface{}) error {
 	setting, ok := ctx.(LightSetting)
 	if !ok {
 		return fmt.Errorf("ctx is invalid type: %T", ctx)
@@ -205,7 +205,7 @@ func ActionSendTVButton(state *State, cli *natureremo.Client, ctx interface{}) e
 	return nil
 }
 
-func ActionSendSignal(state *State, cli *natureremo.Client, ctx interface{}) error {
+func ActionSendSignal(_ *State, cli *natureremo.Client, ctx interface{}) error {
 	id, ok := ctx.(string)
 	if !ok {
 		return fmt.Errorf("ctx is not string: %T", ctx)
@@ -220,7 +220,7 @@ func ActionSendSignal(state *State, cli *natureremo.Client, ctx interface{}) err
 	return nil
 }
 
-func ActionUpdateSelectIdx(state *State, cli *natureremo.Client, ctx interface{}) error {
+func ActionUpdateSelectIdx(state *State, _ *natureremo.Client, ctx interface{}) error {
 	idx, ok := ctx.(int)
 	if !ok {
 		log.Printf(`ctx is not "int": %T\n`, ctx)

@@ -63,7 +63,7 @@ func NewAppliances() *Appliances {
 		"Country",
 	}
 
-	a.SetSelectionChangedFunc(func(row, col int) {
+	a.SetSelectionChangedFunc(func(row, _ int) {
 		ctx := Context{
 			Data: row - 1,
 		}
@@ -140,7 +140,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 
 	addTemp := func() {
 		form.AddDropDown("Temperature", viewData.Temp.Values, viewData.Temp.Current,
-			func(opt string, idx int) {
+			func(_ string, idx int) {
 				if idx == viewData.Temp.Current {
 					return
 				}
@@ -158,7 +158,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 
 	addVolume := func() {
 		form.AddDropDown("Volume", viewData.Volume.Values, viewData.Volume.Current,
-			func(opt string, idx int) {
+			func(_ string, idx int) {
 				if viewData.Volume.Current == idx {
 					return
 				}
@@ -198,7 +198,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 	}
 
 	form.AddDropDown("Power", viewData.Power.Values, viewData.Power.Current,
-		func(text string, idx int) {
+		func(_ string, idx int) {
 			if idx == viewData.Power.Current {
 				return
 			}
@@ -214,7 +214,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 		})
 
 	form.AddDropDown("Modes", viewData.Mode.Values, viewData.Mode.Current,
-		func(opt string, idx int) {
+		func(_ string, idx int) {
 			if viewData.Mode.Current == idx {
 				return
 			}
@@ -233,7 +233,7 @@ func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 	toggleItems()
 
 	form.AddDropDown("Direction", viewData.Direction.Values, viewData.Direction.Current,
-		func(opt string, idx int) {
+		func(_ string, idx int) {
 			if viewData.Direction.Current == idx {
 				return
 			}
