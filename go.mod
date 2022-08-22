@@ -3,7 +3,7 @@ module github.com/skanehira/remonade
 go 1.17
 
 require (
-	github.com/gdamore/tcell/v2 v2.5.2
+	github.com/gdamore/tcell/v2 v2.5.3
 	github.com/google/go-cmp v0.5.8
 	github.com/jinzhu/copier v0.3.5
 	github.com/mattn/go-runewidth v0.0.13
