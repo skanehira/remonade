@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -15,7 +16,7 @@ func NewHeader() *Header {
 	h := &Header{
 		TextView: tview.NewTextView(),
 	}
-	h.SetDynamicColors(true)
+	h.SetDynamicColors(true).SetBackgroundColor(tcell.ColorDefault)
 
 	me, err := Client.UserService.Me(context.Background())
 	if err != nil {

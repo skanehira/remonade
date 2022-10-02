@@ -20,7 +20,7 @@ func NewDevices() *Devices {
 
 	d.SetTitle(" Devices ").SetTitleAlign(tview.AlignLeft)
 	d.SetFixed(1, 0).SetBorder(true)
-	d.SetBorderColor(tcell.ColorBlue)
+	d.SetBorderColor(tcell.ColorBlue).SetBackgroundColor(tcell.ColorDefault)
 
 	d.header = []string{
 		"Name",

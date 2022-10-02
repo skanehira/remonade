@@ -51,7 +51,7 @@ func NewAppliances() *Appliances {
 	}
 	a.SetTitle(" Appliances ").SetTitleAlign(tview.AlignLeft)
 	a.SetFixed(1, 0).SetBorder(true)
-	a.SetBorderColor(tcell.ColorYellow)
+	a.SetBorderColor(tcell.ColorYellow).SetBackgroundColor(tcell.ColorDefault)
 
 	a.header = []string{
 		"Device",
@@ -127,7 +127,7 @@ func NewAppliances() *Appliances {
 func (a *Appliances) OpenUpdateAirConView(app *natureremo.Appliance) {
 	form := tview.NewForm()
 	form.SetBorder(true).SetTitle(" AirCon Settings ").
-		SetTitleAlign(tview.AlignLeft)
+		SetTitleAlign(tview.AlignLeft).SetBackgroundColor(tcell.ColorDefault)
 
 	viewData := ToUpdateAirConViewData(app)
 
@@ -300,7 +300,7 @@ type LightSetting struct {
 func (a *Appliances) OpenUpdateLightView(app *natureremo.Appliance) {
 	table := tview.NewTable().SetSelectable(true, false)
 	table.SetTitle(" Light Settings ").SetTitleAlign(tview.AlignLeft)
-	table.SetFixed(1, 0).SetBorder(true)
+	table.SetFixed(1, 0).SetBorder(true).SetBackgroundColor(tcell.ColorDefault)
 
 	header := []string{
 		"Type",
@@ -388,7 +388,7 @@ type TVSetting struct {
 func (a *Appliances) OpenUpdateTVView(app *natureremo.Appliance) {
 	table := tview.NewTable().SetSelectable(true, false)
 	table.SetTitle(" TV Buttons ").SetTitleAlign(tview.AlignLeft)
-	table.SetFixed(1, 0).SetBorder(true)
+	table.SetFixed(1, 0).SetBorder(true).SetBackgroundColor(tcell.ColorDefault)
 	pageName := "TV"
 
 	header := []string{
@@ -458,7 +458,7 @@ func (a *Appliances) OpenUpdateTVView(app *natureremo.Appliance) {
 func (a *Appliances) OpenUpdateIRView(app *natureremo.Appliance) {
 	table := tview.NewTable().SetSelectable(true, false)
 	table.SetTitle(" IR Signals ").SetTitleAlign(tview.AlignLeft)
-	table.SetFixed(1, 0).SetBorder(true)
+	table.SetFixed(1, 0).SetBorder(true).SetBackgroundColor(tcell.ColorDefault)
 	pageName := "IR"
 
 	header := []string{

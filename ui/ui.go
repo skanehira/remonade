@@ -40,6 +40,7 @@ func (ui *ui) Message(msg string) {
 	modal := tview.NewModal().
 		SetText(msg).
 		AddButtons([]string{"OK"}).
+		SetBackgroundColor(tcell.ColorDefault).
 		SetDoneFunc(func(_ int, _ string) {
 			ui.Pages.RemovePage("message").ShowPage("main")
 			ui.App.SetFocus(oldFocus)
@@ -54,6 +55,7 @@ func (ui *ui) Confirm(msg, doLabel string, doFunc func() error) {
 	modal := tview.NewModal().
 		SetText(msg).
 		AddButtons([]string{doLabel, "Cancel"}).
+		SetBackgroundColor(tcell.ColorDefault).
 		SetDoneFunc(func(_ int, buttonLabel string) {
 			ui.Pages.RemovePage("modal").ShowPage("main")
 			ui.App.SetFocus(oldFocus)

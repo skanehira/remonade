@@ -17,7 +17,7 @@ func NewEvents() *Events {
 
 	e.SetTitle(" Events ").SetTitleAlign(tview.AlignLeft)
 	e.SetFixed(1, 0).SetBorder(true)
-	e.Clear().SetBorderColor(tcell.ColorGreen)
+	e.Clear().SetBorderColor(tcell.ColorGreen).SetBackgroundColor(tcell.ColorDefault)
 
 	e.header = []string{
 		"Device",
