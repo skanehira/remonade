@@ -6,7 +6,7 @@ toolchain go1.21.2
 
 require (
 	github.com/gdamore/tcell/v2 v2.8.1
-	github.com/google/go-cmp v0.6.0
+	github.com/google/go-cmp v0.7.0
 	github.com/jinzhu/copier v0.3.5
 	github.com/mattn/go-runewidth v0.0.16
 	github.com/rivo/tview v0.0.0-20210312174852-ae9464cc3598
