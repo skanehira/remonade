@@ -39,7 +39,9 @@ func Load() {
 	if err != nil {
 		util.ExitError(err)
 	}
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 
 	if err := yaml.NewDecoder(f).Decode(&Config); err != nil {
 		util.ExitError(fmt.Errorf("cannot decode %s: %w", Path, err))
@@ -59,7 +61,9 @@ func Create(path string) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 
 	return nil
 }

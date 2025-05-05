@@ -2,15 +2,15 @@
 ![GitHub](https://img.shields.io/github/license/skanehira/remonade)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/skanehira/remonade)
 ![GitHub all releases](https://img.shields.io/github/downloads/skanehira/remonade/total)
-![GitHub CI Status](https://img.shields.io/github/workflow/status/skanehira/remonade/ci?label=CI)
-![GitHub Release Status](https://img.shields.io/github/workflow/status/skanehira/remonade/Release?label=release)
+![GitHub CI Status](https://img.shields.io/github/actions/workflow/status/skanehira/remonade/ci.yaml)
+![GitHub Release Status](https://img.shields.io/github/actions/workflow/status/skanehira/remonade/release.yaml)
 
 # <img src="https://i.gyazo.com/85e13d8198dcb843ece467cad46350e7.png" width="30"/> remonade - Unofficial Nature Remo CLI
 
 ![](https://i.gyazo.com/e1e0e0e34c51b1bf1894bbd26a3f442b.png)
 
 ## Requirements
-- Go 1.16 ~
+- Go 1.21 ~
 
 ## Installation
 - From source code
