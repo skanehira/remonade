@@ -12,35 +12,35 @@ jobs:
   golangci:
     strategy:
       matrix:
-        go-version: [1.19.x]
+        go-version: ['stable']
         os: [ubuntu-latest]
     name: golangci-lint
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Install Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
+        uses: golangci/golangci-lint-action@v8
         with:
           version: latest
   lint:
     strategy:
       matrix:
-        go-version: [1.19.x]
+        go-version: ['stable']
         os: [windows-latest, macos-latest, ubuntu-latest]
     name: lint
     runs-on: ${{ matrix.os }}
     steps:
       - name: Install Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
       - name: Checkout code
-        uses: actions/checkout@v3
-      - uses: actions/cache@v3.3.1
+        uses: actions/checkout@v4
+      - uses: actions/cache@v4.2.3
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -53,18 +53,18 @@ jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.19.x]
+        go-version: ['stable']
         os: [windows-latest, macos-latest, ubuntu-latest]
     name: test
     runs-on: ${{ matrix.os }}
     steps:
       - name: Install Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
       - name: Checkout code
-        uses: actions/checkout@v3
-      - uses: actions/cache@v3.3.1
+        uses: actions/checkout@v4
+      - uses: actions/cache@v4.2.3
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -72,5 +72,5 @@ jobs:
             ${{ runner.os }}-go-
       - name: go test
         run: go test -v ./... -coverprofile=coverage.out
-      - uses: k1LoW/octocov-action@v0
+      - uses: k1LoW/octocov-action@v1
         if: runner.os == 'Linux'

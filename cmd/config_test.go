@@ -50,9 +50,9 @@ func TestRunEdit(t *testing.T) {
 
 	t.Run("no $EDITOR", func(t *testing.T) {
 		editor := os.Getenv("EDITOR")
-		os.Setenv("EDITOR", "")
+		_ = os.Setenv("EDITOR", "")
 		t.Cleanup(func() {
-			os.Setenv("EDITOR", editor)
+			_ = os.Setenv("EDITOR", editor)
 		})
 
 		tmp, err := os.CreateTemp("", "")

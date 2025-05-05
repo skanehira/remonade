@@ -27,7 +27,9 @@ func Execute() {
 			if err != nil {
 				util.ExitError(err)
 			}
-			defer f.Close()
+			defer func() {
+				_ = f.Close()
+			}()
 			log.SetOutput(f)
 		} else {
 			log.SetOutput(io.Discard)

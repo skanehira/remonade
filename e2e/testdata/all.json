@@ -318,7 +318,7 @@
       }
     },
     {
-      "id": "19c8ed2b-aac2-4fa4-9be3-311ecf5ced77",
+      "id": "19c8ed2b-aac2-4fa4-9be3-311ecf5ced78",
       "device": {
         "name": "Remo mini",
         "id": "6bea336b-8010-4d25-8da6-9e6c0f823e11",
@@ -435,7 +435,7 @@
       "settings": {
         "temp": "25",
         "temp_unit": "c",
-        "mode": "bool",
+        "mode": "cool",
         "vol": "1",
         "dir": "auto",
         "dirh": "",

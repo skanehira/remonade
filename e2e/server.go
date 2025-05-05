@@ -16,20 +16,26 @@ func main() {
 	if err != nil {
 		return
 	}
+	defer func() {
+		_ = f.Close()
+	}()
 	m := map[string]interface{}{}
 
 	if err := json.NewDecoder(f).Decode(&m); err != nil {
-		f.Close()
 		log.Println(err)
 		return
 	}
-	f.Close()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Content-Type", "application/json")
-		w.Header().Add("X-Rate-Limit-Limit", "30")
-		w.Header().Add("X-Rate-Limit-Remaining", "30")
-		w.Header().Add("X-Rate-Limit-Reset", fmt.Sprintf("%d", time.Now().Unix()))
+		headers := map[string]string{
+			"Content-Type":           "application/json",
+			"X-Rate-Limit-Limit":     "30",
+			"X-Rate-Limit-Remaining": "30",
+			"X-Rate-Limit-Reset":     fmt.Sprintf("%d", time.Now().Unix()),
+		}
+		for k, v := range headers {
+			w.Header().Add(k, v)
+		}
 
 		_ = r.ParseForm()
 

@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	IndexOutOfAppliances = errors.New("index out of appliances")
+	ErrIndexOutOfAppliances = errors.New("index out of appliances")
 )
 
 type Event struct {
@@ -56,7 +56,7 @@ func (s *State) PushEvent(ev Event) {
 func (s *State) SelectAppliance() (*natureremo.Appliance, error) {
 	if s.SelectApplianceIdx >= len(s.Appliances) {
 		log.Println("select idx is greater than state.Appliances's length")
-		return nil, IndexOutOfAppliances
+		return nil, ErrIndexOutOfAppliances
 	}
 	return s.Appliances[s.SelectApplianceIdx], nil
 }
