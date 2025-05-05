@@ -36,7 +36,9 @@ func runInit(path string) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		_ = f.Close()
+	}()
 
 	fmt.Print("Your access token: ")
 	sc := bufio.NewScanner(os.Stdin)
