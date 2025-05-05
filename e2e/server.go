@@ -16,14 +16,15 @@ func main() {
 	if err != nil {
 		return
 	}
+	defer func() {
+		_ = f.Close()
+	}()
 	m := map[string]interface{}{}
 
 	if err := json.NewDecoder(f).Decode(&m); err != nil {
-		f.Close()
 		log.Println(err)
 		return
 	}
-	f.Close()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		headers := map[string]string{
