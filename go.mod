@@ -8,7 +8,7 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/mattn/go-runewidth v0.0.19
 	github.com/rivo/tview v0.42.0
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 	github.com/tenntenn/natureremo v0.4.0
 	gopkg.in/yaml.v3 v3.0.1
 )
